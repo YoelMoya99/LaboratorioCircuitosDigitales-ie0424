@@ -10,4 +10,4 @@ RVfpga:
  + Labs: espacio para los proyectos de firmware de los estudiantes.
 
 vivado:
- + proyectos de Vivado
+ + proyectos de Vivado.
