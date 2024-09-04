@@ -80,7 +80,7 @@ For1:
 
     sw a0, 0(t2)     # a0 y a1 son resgitros de retorno de las funciones
     addi t3,t3,3     # t3 + 3
-    addi t0,t0,1    # i++
+    addi t0,t0,1     # i++
     bne t0, t4, For1 # hasta que no se recorra todo quedese
     
 
