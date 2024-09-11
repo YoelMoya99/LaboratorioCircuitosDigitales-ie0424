@@ -136,7 +136,7 @@ int main(int argc, char **argv, char **env)
   top->clk = 1;
   top->rst = 1;
 
-  top->i_sw0 = 0;
+  top->i_sw0 = 0; 
 
   while (!(done || Verilated::gotFinish())) {
     if (main_time == 100) {

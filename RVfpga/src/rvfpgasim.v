@@ -33,7 +33,8 @@ module rvfpgasim
    input wire  i_jtag_trst_n,
    output wire o_jtag_tdo,
    output wire o_uart_tx,
-   output wire o_gpio)
+   output wire o_gpio,
+   input wire i_sw0)
 `endif
 ;
 
@@ -77,8 +78,8 @@ module rvfpgasim
    end
 
    wire [15:0]  i_sw;
-   assign  i_sw = 16'hFEDC;
-
+   //assign  i_sw = 16'hFE34;
+   assign  i_sw = {15'b111111100011010,i_sw0};
    wire [5:0]  ram_awid;
    wire [31:0] ram_awaddr;
    wire [7:0]  ram_awlen;
