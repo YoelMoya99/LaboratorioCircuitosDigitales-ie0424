@@ -73,6 +73,21 @@ wire        wb_s2m_gpio_ack;
 wire        wb_s2m_gpio_err;
 wire        wb_s2m_gpio_rty;
 
+//Botton
+wire [31:0] wb_m2s_gpio_adr_btn;
+wire [31:0] wb_m2s_gpio_dat_btn;
+wire  [3:0] wb_m2s_gpio_sel_btn;
+wire        wb_m2s_gpio_we_btn;
+wire        wb_m2s_gpio_cyc_btn;
+wire        wb_m2s_gpio_stb_btn;
+wire  [2:0] wb_m2s_gpio_cti_btn;
+wire  [1:0] wb_m2s_gpio_bte_btn;
+wire [31:0] wb_s2m_gpio_dat_btn;
+wire        wb_s2m_gpio_ack_btn;
+wire        wb_s2m_gpio_err_btn;
+wire        wb_s2m_gpio_rty_btn;
+
+
 // PTC
 wire [31:0] wb_m2s_ptc_adr;
 wire [31:0] wb_m2s_ptc_dat;

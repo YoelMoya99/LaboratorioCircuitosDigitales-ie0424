@@ -136,6 +136,12 @@ int main(int argc, char **argv, char **env)
   top->clk = 1;
   top->rst = 1;
 
+  top->BTNC=0;
+  top->BTNU=0;
+  top->BTND=0;
+  top->BTNL=0;
+  top->BTNR=0;
+
   top->i_sw0 = 0; 
 
   while (!(done || Verilated::gotFinish())) {
@@ -177,9 +183,46 @@ int main(int argc, char **argv, char **env)
     }
     top->clk = !top->clk;
     main_time+=10;
+    
+    if (main_time == 300){
+        top->i_sw0 = 1;
+        top->BTNC= !top->BTNC;
+        top->BTNU= !top->BTNU;
+        top->BTND= !top->BTND;
+        top->BTNL= !top->BTNL;
+        top->BTNR= !top->BTNR;
+        
+    }
+    if (main_time == 3000){
+        top->i_sw0 = 1;
+        top->BTNC= !top->BTNC;
+        top->BTNU= !top->BTNU;
+        top->BTND= !top->BTND;
+        top->BTNL= !top->BTNL;
+        top->BTNR= !top->BTNR;
+        
+    }
     if (main_time == 30000){
         top->i_sw0 = 1;
+        top->BTNC= !top->BTNC;
+        top->BTNU= !top->BTNU;
+        top->BTND= !top->BTND;
+        top->BTNL= !top->BTNL;
+        top->BTNR= !top->BTNR;
+        
     }
+    if (main_time == 50000){
+        top->i_sw0 = 1;
+        top->BTNC= !top->BTNC;
+        top->BTNU= !top->BTNU;
+        top->BTND= !top->BTND;
+        top->BTNL= !top->BTNL;
+        top->BTNR= !top->BTNR;
+        
+    }
+
+
+
   }
   if (tfp)
     tfp->close();

@@ -78,6 +78,7 @@ module swervolf_core
     input wire 	       i_ram_init_done,
     input wire 	       i_ram_init_error,
     inout wire [31:0]  io_data,
+    inout wire [31:0]  io_data_botton,
     output wire [ 7          :0] AN,
     output wire [ 6          :0] Digits_Bits,
     output wire        o_accel_sclk,
@@ -354,6 +355,40 @@ module swervolf_core
         .ext_padoe_o   (en_gpio));
 
 
+
+    // GPIO - Botones.
+    wire [31:0] en_gpio_btn;
+    wire        gpio_irq_btn;
+    wire [31:0] i_gpio_btn;
+    wire [31:0] o_gpio_btn;
+
+   
+   bidirec gpio_btn_0  (.oe(1'b0 ), .inp(o_gpio_btn[0] ), .outp(i_gpio_btn[0] ), .bidir(io_data_botton[0] ));
+   bidirec gpio_btn_1  (.oe(1'b0 ), .inp(o_gpio_btn[1] ), .outp(i_gpio_btn[1] ), .bidir(io_data_botton[1] ));
+   bidirec gpio_btn_2  (.oe(1'b0 ), .inp(o_gpio_btn[2] ), .outp(i_gpio_btn[2] ), .bidir(io_data_botton[2] ));
+   bidirec gpio_btn_3  (.oe(1'b0 ), .inp(o_gpio_btn[3] ), .outp(i_gpio_btn[3] ), .bidir(io_data_botton[3] ));
+   bidirec gpio_btn_4  (.oe(1'b0 ), .inp(o_gpio_btn[4] ), .outp(i_gpio_btn[4] ), .bidir(io_data_botton[4] ));
+
+
+    gpio_top gpio_botton(
+          .wb_clk_i     (clk), 
+          .wb_rst_i     (wb_rst), 
+          .wb_cyc_i     (wb_m2s_gpio_cyc_btn), 
+          .wb_adr_i     ({2'b0,wb_m2s_gpio_adr_btn[5:2],2'b0}), 
+          .wb_dat_i     (wb_m2s_gpio_dat_btn), 
+          .wb_sel_i     (4'b1111),
+          .wb_we_i      (wb_m2s_gpio_we_btn), 
+          .wb_stb_i     (wb_m2s_gpio_stb_btn), 
+          .wb_dat_o     (wb_s2m_gpio_dat_btn),
+          .wb_ack_o     (wb_s2m_gpio_ack_btn), 
+          .wb_err_o     (wb_s2m_gpio_err_btn),
+          .wb_inta_o    (gpio_irq_btn),
+          // External GPIO Interface
+          .ext_pad_i     (i_gpio_btn[31:0]),
+          .ext_pad_o     (o_gpio_btn[31:0]),
+          .ext_padoe_o   (en_gpio_btn));
+
+  
 
    // PTC
    wire        ptc_irq;

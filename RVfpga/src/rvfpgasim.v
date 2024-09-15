@@ -34,7 +34,15 @@ module rvfpgasim
    output wire o_jtag_tdo,
    output wire o_uart_tx,
    output wire o_gpio,
-   input wire i_sw0)
+   input wire i_sw0,
+   
+   input wire BTNC,
+   input wire BTNU,
+   input wire BTNL,
+   input wire BTNR,
+   input wire BTND
+   
+   )
 `endif
 ;
 
@@ -80,6 +88,8 @@ module rvfpgasim
    wire [15:0]  i_sw;
    //assign  i_sw = 16'hFE34;
    assign  i_sw = {15'b111111100011010,i_sw0};
+   wire [31:0]  i_botton;
+   assign i_botton = {27'b0,BTND, BTNR, BTNL, BTNU, BTNC}; 
    wire [5:0]  ram_awid;
    wire [31:0] ram_awaddr;
    wire [7:0]  ram_awlen;
@@ -245,6 +255,7 @@ module rvfpgasim
       .o_ram_rready        (ram_rready),
       .i_ram_init_done     (1'b1),
       .i_ram_init_error    (1'b0),
+      .io_data_botton      (i_botton),
       .io_data             ({i_sw,16'bz}));
-
+      
 endmodule
