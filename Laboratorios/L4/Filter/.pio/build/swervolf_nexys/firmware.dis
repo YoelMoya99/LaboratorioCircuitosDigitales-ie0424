@@ -1,0 +1,167 @@
+
+.pio\build\swervolf_nexys\firmware.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text.init:
+
+00000000 <_start>:
+   0:	b0201073          	csrw	minstret,zero
+   4:	b8201073          	csrw	minstreth,zero
+   8:	4081                	li	ra,0
+   a:	4101                	li	sp,0
+   c:	4181                	li	gp,0
+   e:	4201                	li	tp,0
+  10:	4281                	li	t0,0
+  12:	4301                	li	t1,0
+  14:	4381                	li	t2,0
+  16:	4401                	li	s0,0
+  18:	4481                	li	s1,0
+  1a:	4501                	li	a0,0
+  1c:	4581                	li	a1,0
+  1e:	4601                	li	a2,0
+  20:	4681                	li	a3,0
+  22:	4701                	li	a4,0
+  24:	4781                	li	a5,0
+  26:	4801                	li	a6,0
+  28:	4881                	li	a7,0
+  2a:	4901                	li	s2,0
+  2c:	4981                	li	s3,0
+  2e:	4a01                	li	s4,0
+  30:	4a81                	li	s5,0
+  32:	4b01                	li	s6,0
+  34:	4b81                	li	s7,0
+  36:	4c01                	li	s8,0
+  38:	4c81                	li	s9,0
+  3a:	4d01                	li	s10,0
+  3c:	4d81                	li	s11,0
+  3e:	4e01                	li	t3,0
+  40:	4e81                	li	t4,0
+  42:	4f01                	li	t5,0
+  44:	4f81                	li	t6,0
+  46:	55555337          	lui	t1,0x55555
+  4a:	55530313          	addi	t1,t1,1365 # 55555555 <_sw_int_mem_ctrl+0x51555555>
+  4e:	7c031073          	csrw	0x7c0,t1
+  52:	00003197          	auipc	gp,0x3
+  56:	94618193          	addi	gp,gp,-1722 # 2998 <__global_pointer$>
+  5a:	00003117          	auipc	sp,0x3
+  5e:	15610113          	addi	sp,sp,342 # 31b0 <_sp>
+  62:	00002517          	auipc	a0,0x2
+  66:	13650513          	addi	a0,a0,310 # 2198 <__bss_start>
+  6a:	81818593          	addi	a1,gp,-2024 # 21b0 <_end>
+  6e:	00b57763          	bgeu	a0,a1,7c <N+0x76>
+  72:	00052023          	sw	zero,0(a0)
+  76:	0511                	addi	a0,a0,4
+  78:	feb56de3          	bltu	a0,a1,72 <N+0x6c>
+  7c:	2071                	jal	108 <__libc_init_array>
+  7e:	4501                	li	a0,0
+  80:	4581                	li	a1,0
+  82:	2835                	jal	be <main>
+  84:	a001                	j	84 <N+0x7e>
+	...
+
+Disassembly of section .text:
+
+00000088 <MyFilter>:
+  88:	1141                	addi	sp,sp,-16
+  8a:	c016                	sw	t0,0(sp)
+  8c:	c21a                	sw	t1,4(sp)
+  8e:	c41e                	sw	t2,8(sp)
+  90:	c672                	sw	t3,12(sp)
+  92:	82b2                	mv	t0,a2
+  94:	8336                	mv	t1,a3
+  96:	00f2f393          	andi	t2,t0,15
+  9a:	00038563          	beqz	t2,a4 <si_es_multiplo_de_16>
+
+0000009e <asigna0>:
+  9e:	00000513          	li	a0,0
+  a2:	a801                	j	b2 <fin_MyFilter>
+
+000000a4 <si_es_multiplo_de_16>:
+  a4:	4e05                	li	t3,1
+  a6:	41c30333          	sub	t1,t1,t3
+  aa:	00535363          	bge	t1,t0,b0 <asigna1>
+  ae:	bfc5                	j	9e <asigna0>
+
+000000b0 <asigna1>:
+  b0:	4505                	li	a0,1
+
+000000b2 <fin_MyFilter>:
+  b2:	4282                	lw	t0,0(sp)
+  b4:	4312                	lw	t1,4(sp)
+  b6:	43a2                	lw	t2,8(sp)
+  b8:	4e32                	lw	t3,12(sp)
+  ba:	0141                	addi	sp,sp,16
+  bc:	8082                	ret
+
+000000be <main>:
+  be:	4281                	li	t0,0
+  c0:	4301                	li	t1,0
+  c2:	4399                	li	t2,6
+  c4:	4e05                	li	t3,1
+  c6:	41c383b3          	sub	t2,t2,t3
+
+000000ca <for>:
+  ca:	00002e17          	auipc	t3,0x2
+  ce:	0aae0e13          	addi	t3,t3,170 # 2174 <A>
+  d2:	4e91                	li	t4,4
+  d4:	025e8eb3          	mul	t4,t4,t0
+  d8:	01ce8633          	add	a2,t4,t3
+  dc:	4254                	lw	a3,4(a2)
+  de:	4210                	lw	a2,0(a2)
+  e0:	8e36                	mv	t3,a3
+  e2:	8eb2                	mv	t4,a2
+  e4:	3755                	jal	88 <MyFilter>
+  e6:	cd11                	beqz	a0,102 <no_asigna_a_b>
+  e8:	9e76                	add	t3,t3,t4
+  ea:	0e09                	addi	t3,t3,2
+  ec:	00002f17          	auipc	t5,0x2
+  f0:	0acf0f13          	addi	t5,t5,172 # 2198 <__bss_start>
+  f4:	4e91                	li	t4,4
+  f6:	026e8eb3          	mul	t4,t4,t1
+  fa:	9f76                	add	t5,t5,t4
+  fc:	01cf2023          	sw	t3,0(t5)
+ 100:	0305                	addi	t1,t1,1
+
+00000102 <no_asigna_a_b>:
+ 102:	0285                	addi	t0,t0,1
+ 104:	fc7293e3          	bne	t0,t2,ca <for>
+
+00000108 <__libc_init_array>:
+ 108:	1141                	addi	sp,sp,-16
+ 10a:	c422                	sw	s0,8(sp)
+ 10c:	c04a                	sw	s2,0(sp)
+ 10e:	00000417          	auipc	s0,0x0
+ 112:	ef240413          	addi	s0,s0,-270 # 0 <__comrv_align_size>
+ 116:	00000917          	auipc	s2,0x0
+ 11a:	eea90913          	addi	s2,s2,-278 # 0 <__comrv_align_size>
+ 11e:	40890933          	sub	s2,s2,s0
+ 122:	c606                	sw	ra,12(sp)
+ 124:	c226                	sw	s1,4(sp)
+ 126:	40295913          	srai	s2,s2,0x2
+ 12a:	00090963          	beqz	s2,13c <__libc_init_array+0x34>
+ 12e:	4481                	li	s1,0
+ 130:	401c                	lw	a5,0(s0)
+ 132:	0485                	addi	s1,s1,1
+ 134:	0411                	addi	s0,s0,4
+ 136:	9782                	jalr	a5
+ 138:	fe991ce3          	bne	s2,s1,130 <__libc_init_array+0x28>
+ 13c:	00000417          	auipc	s0,0x0
+ 140:	ec440413          	addi	s0,s0,-316 # 0 <__comrv_align_size>
+ 144:	00000917          	auipc	s2,0x0
+ 148:	ebc90913          	addi	s2,s2,-324 # 0 <__comrv_align_size>
+ 14c:	40890933          	sub	s2,s2,s0
+ 150:	40295913          	srai	s2,s2,0x2
+ 154:	00090963          	beqz	s2,166 <__libc_init_array+0x5e>
+ 158:	4481                	li	s1,0
+ 15a:	401c                	lw	a5,0(s0)
+ 15c:	0485                	addi	s1,s1,1
+ 15e:	0411                	addi	s0,s0,4
+ 160:	9782                	jalr	a5
+ 162:	fe991ce3          	bne	s2,s1,15a <__libc_init_array+0x52>
+ 166:	40b2                	lw	ra,12(sp)
+ 168:	4422                	lw	s0,8(sp)
+ 16a:	4492                	lw	s1,4(sp)
+ 16c:	4902                	lw	s2,0(sp)
+ 16e:	0141                	addi	sp,sp,16
+ 170:	8082                	ret
+	...

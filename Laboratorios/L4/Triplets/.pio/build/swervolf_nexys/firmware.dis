@@ -1,0 +1,157 @@
+
+.pio\build\swervolf_nexys\firmware.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text.init:
+
+00000000 <_start>:
+   0:	b0201073          	csrw	minstret,zero
+   4:	b8201073          	csrw	minstreth,zero
+   8:	4081                	li	ra,0
+   a:	4101                	li	sp,0
+   c:	4181                	li	gp,0
+   e:	4201                	li	tp,0
+  10:	4281                	li	t0,0
+  12:	4301                	li	t1,0
+  14:	4381                	li	t2,0
+  16:	4401                	li	s0,0
+  18:	4481                	li	s1,0
+  1a:	4501                	li	a0,0
+  1c:	4581                	li	a1,0
+  1e:	4601                	li	a2,0
+  20:	4681                	li	a3,0
+  22:	4701                	li	a4,0
+  24:	4781                	li	a5,0
+  26:	4801                	li	a6,0
+  28:	4881                	li	a7,0
+  2a:	4901                	li	s2,0
+  2c:	4981                	li	s3,0
+  2e:	4a01                	li	s4,0
+  30:	4a81                	li	s5,0
+  32:	4b01                	li	s6,0
+  34:	4b81                	li	s7,0
+  36:	4c01                	li	s8,0
+  38:	4c81                	li	s9,0
+  3a:	4d01                	li	s10,0
+  3c:	4d81                	li	s11,0
+  3e:	4e01                	li	t3,0
+  40:	4e81                	li	t4,0
+  42:	4f01                	li	t5,0
+  44:	4f81                	li	t6,0
+  46:	55555337          	lui	t1,0x55555
+  4a:	55530313          	addi	t1,t1,1365 # 55555555 <_sw_int_mem_ctrl+0x51555555>
+  4e:	7c031073          	csrw	0x7c0,t1
+  52:	00003197          	auipc	gp,0x3
+  56:	94e18193          	addi	gp,gp,-1714 # 29a0 <__global_pointer$>
+  5a:	00003117          	auipc	sp,0x3
+  5e:	15610113          	addi	sp,sp,342 # 31b0 <_sp>
+  62:	00002517          	auipc	a0,0x2
+  66:	13e50513          	addi	a0,a0,318 # 21a0 <__bss_start>
+  6a:	81018593          	addi	a1,gp,-2032 # 21b0 <_end>
+  6e:	00b57763          	bgeu	a0,a1,7c <N+0x79>
+  72:	00052023          	sw	zero,0(a0)
+  76:	0511                	addi	a0,a0,4
+  78:	feb56de3          	bltu	a0,a1,72 <N+0x6f>
+  7c:	2061                	jal	104 <__libc_init_array>
+  7e:	4501                	li	a0,0
+  80:	4581                	li	a1,0
+  82:	2891                	jal	d6 <main>
+  84:	a001                	j	84 <N+0x81>
+	...
+
+Disassembly of section .text:
+
+00000088 <res_triplet>:
+  88:	1131                	addi	sp,sp,-20
+  8a:	c016                	sw	t0,0(sp)
+  8c:	c21a                	sw	t1,4(sp)
+  8e:	c41e                	sw	t2,8(sp)
+  90:	c672                	sw	t3,12(sp)
+  92:	c876                	sw	t4,16(sp)
+  94:	4291                	li	t0,4
+  96:	025686b3          	mul	a3,a3,t0
+  9a:	00d602b3          	add	t0,a2,a3
+  9e:	0002a303          	lw	t1,0(t0)
+  a2:	0042a383          	lw	t2,4(t0)
+  a6:	0082ae03          	lw	t3,8(t0)
+  aa:	00730eb3          	add	t4,t1,t2
+  ae:	9ef2                	add	t4,t4,t3
+  b0:	6e21                	lui	t3,0x8
+  b2:	4f41                	li	t5,16
+  b4:	01ee1e33          	sll	t3,t3,t5
+  b8:	01de7e33          	and	t3,t3,t4
+  bc:	000e0563          	beqz	t3,c6 <Es_posi>
+  c0:	41d00533          	neg	a0,t4
+  c4:	a011                	j	c8 <Fin_res_triplet>
+
+000000c6 <Es_posi>:
+  c6:	8576                	mv	a0,t4
+
+000000c8 <Fin_res_triplet>:
+  c8:	4282                	lw	t0,0(sp)
+  ca:	4312                	lw	t1,4(sp)
+  cc:	43a2                	lw	t2,8(sp)
+  ce:	4e32                	lw	t3,12(sp)
+  d0:	4ec2                	lw	t4,16(sp)
+  d2:	0151                	addi	sp,sp,20
+  d4:	8082                	ret
+
+000000d6 <main>:
+  d6:	4281                	li	t0,0
+  d8:	4e01                	li	t3,0
+  da:	4e8d                	li	t4,3
+
+000000dc <For1>:
+  dc:	00002617          	auipc	a2,0x2
+  e0:	09460613          	addi	a2,a2,148 # 2170 <A>
+  e4:	86f2                	mv	a3,t3
+  e6:	374d                	jal	88 <res_triplet>
+  e8:	4311                	li	t1,4
+  ea:	02628333          	mul	t1,t0,t1
+  ee:	00002397          	auipc	t2,0x2
+  f2:	0b238393          	addi	t2,t2,178 # 21a0 <__bss_start>
+  f6:	939a                	add	t2,t2,t1
+  f8:	00a3a023          	sw	a0,0(t2)
+  fc:	0e0d                	addi	t3,t3,3
+  fe:	0285                	addi	t0,t0,1
+ 100:	fdd29ee3          	bne	t0,t4,dc <For1>
+
+00000104 <__libc_init_array>:
+ 104:	1141                	addi	sp,sp,-16
+ 106:	c422                	sw	s0,8(sp)
+ 108:	c04a                	sw	s2,0(sp)
+ 10a:	00000417          	auipc	s0,0x0
+ 10e:	ef640413          	addi	s0,s0,-266 # 0 <__comrv_align_size>
+ 112:	00000917          	auipc	s2,0x0
+ 116:	eee90913          	addi	s2,s2,-274 # 0 <__comrv_align_size>
+ 11a:	40890933          	sub	s2,s2,s0
+ 11e:	c606                	sw	ra,12(sp)
+ 120:	c226                	sw	s1,4(sp)
+ 122:	40295913          	srai	s2,s2,0x2
+ 126:	00090963          	beqz	s2,138 <__libc_init_array+0x34>
+ 12a:	4481                	li	s1,0
+ 12c:	401c                	lw	a5,0(s0)
+ 12e:	0485                	addi	s1,s1,1
+ 130:	0411                	addi	s0,s0,4
+ 132:	9782                	jalr	a5
+ 134:	fe991ce3          	bne	s2,s1,12c <__libc_init_array+0x28>
+ 138:	00000417          	auipc	s0,0x0
+ 13c:	ec840413          	addi	s0,s0,-312 # 0 <__comrv_align_size>
+ 140:	00000917          	auipc	s2,0x0
+ 144:	ec090913          	addi	s2,s2,-320 # 0 <__comrv_align_size>
+ 148:	40890933          	sub	s2,s2,s0
+ 14c:	40295913          	srai	s2,s2,0x2
+ 150:	00090963          	beqz	s2,162 <__libc_init_array+0x5e>
+ 154:	4481                	li	s1,0
+ 156:	401c                	lw	a5,0(s0)
+ 158:	0485                	addi	s1,s1,1
+ 15a:	0411                	addi	s0,s0,4
+ 15c:	9782                	jalr	a5
+ 15e:	fe991ce3          	bne	s2,s1,156 <__libc_init_array+0x52>
+ 162:	40b2                	lw	ra,12(sp)
+ 164:	4422                	lw	s0,8(sp)
+ 166:	4492                	lw	s1,4(sp)
+ 168:	4902                	lw	s2,0(sp)
+ 16a:	0141                	addi	sp,sp,16
+ 16c:	8082                	ret
+	...
