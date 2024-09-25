@@ -192,6 +192,22 @@ wb_intercon wb_intercon0
     .wb_gpio_ack_i      (wb_s2m_gpio_ack),
     .wb_gpio_err_i      (wb_s2m_gpio_err),
     .wb_gpio_rty_i      (wb_s2m_gpio_rty),
+
+// Bottons
+    .wb_gpio_dat_o_btn      (wb_m2s_gpio_adr_btn),
+    .wb_gpio_adr_o_btn      (wb_m2s_gpio_dat_btn),
+    .wb_gpio_sel_o_btn      (wb_m2s_gpio_sel_btn),
+    .wb_gpio_we_o_btn,      (wb_m2s_gpio_we_btn),
+    .wb_gpio_cyc_o_btn      (wb_m2s_gpio_cyc_btn),
+    .wb_gpio_stb_o_btn      (wb_m2s_gpio_stb_btn),
+    .wb_gpio_cti_o_btn      (wb_m2s_gpio_cti_btn),
+    .wb_gpio_bte_o_btn      (wb_m2s_gpio_bte_btn),
+    .wb_gpio_dat_i_btn      (wb_s2m_gpio_dat_btn),
+    .wb_gpio_ack_i_btn      (wb_s2m_gpio_ack_btn),
+    . wb_gpio_err_i_btn      (wb_s2m_gpio_err_btn),
+    .wb_gpio_rty_i_btn      (wb_s2m_gpio_rty_btn),
+
+
 // PTC
     .wb_ptc_adr_o      (wb_m2s_ptc_adr),
     .wb_ptc_dat_o      (wb_m2s_ptc_dat),
