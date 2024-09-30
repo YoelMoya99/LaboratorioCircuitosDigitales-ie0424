@@ -184,40 +184,30 @@ int main(int argc, char **argv, char **env)
     top->clk = !top->clk;
     main_time+=10;
     
-    if (main_time == 100){
+    if (main_time == 10000){
         top->i_sw0 = 1;
         top->BTNC= !top->BTNC;
-        top->BTNU= !top->BTNU;
-        top->BTND= !top->BTND;
         top->BTNL= !top->BTNL;
-        top->BTNR= !top->BTNR;
         
     }
-    if (main_time == 200){
+    if (main_time == 20000){
         top->i_sw0 = 1;
         top->BTNC= !top->BTNC;
-        top->BTNU= !top->BTNU;
-        top->BTND= !top->BTND;
         top->BTNL= !top->BTNL;
-        top->BTNR= !top->BTNR;
         
     }
-    if (main_time == 300){
+    if (main_time == 30000){
         top->i_sw0 = 1;
         top->BTNC= !top->BTNC;
-        top->BTNU= !top->BTNU;
-        top->BTND= !top->BTND;
         top->BTNL= !top->BTNL;
-        top->BTNR= !top->BTNR;
+        
         
     }
-    if (main_time == 400){
+    if (main_time == 40000){
         top->i_sw0 = 1;
         top->BTNC= !top->BTNC;
-        top->BTNU= !top->BTNU;
-        top->BTND= !top->BTND;
         top->BTNL= !top->BTNL;
-        top->BTNR= !top->BTNR;
+        
         
     }
 

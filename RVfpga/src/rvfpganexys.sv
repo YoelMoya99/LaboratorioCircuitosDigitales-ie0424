@@ -52,6 +52,16 @@ module rvfpganexys
     output wire        o_accel_cs_n,
     output wire        o_accel_mosi,
     input wire         i_accel_miso,
+
+   /* inout wire BTNU,
+    inout wire BTND,
+    inout wire BTNL,
+    inout wire BTNR,
+    inout wire BTNC, */
+
+    inout wire [4:0] i_boton,
+
+
     output wire        accel_sclk);
 
    wire [15:0] 	       gpio_out;
@@ -85,6 +95,9 @@ module rvfpganexys
    assign cpu.r_user = 1'b0;
    assign mem.b_user = 1'b0;
    assign mem.r_user = 1'b0;
+
+   wire [31:0]  i_boton;
+   assign i_boton = {27'b0,BTND, BTNR, BTNL, BTNU, BTNC}; 
 
    axi_cdc_intf
      #(.AXI_USER_WIDTH (1),
@@ -260,6 +273,7 @@ module rvfpganexys
       .o_accel_sclk   (accel_sclk),
       .o_accel_cs_n   (o_accel_cs_n),
       .o_accel_mosi   (o_accel_mosi),
+      .io_data_boton  (i_boton[4:0]),
       .i_accel_miso   (i_accel_miso));
 
    always @(posedge clk_core) begin
@@ -269,3 +283,5 @@ module rvfpganexys
    assign o_uart_tx = 1'b0 ? litedram_tx : cpu_tx;
 
 endmodule
+
+

@@ -41,6 +41,7 @@ module rvfpgasim
    input wire BTNL,
    input wire BTNR,
    input wire BTND
+
    
    )
 `endif
@@ -88,8 +89,8 @@ module rvfpgasim
    wire [15:0]  i_sw;
    //assign  i_sw = 16'hFE34;
    assign  i_sw = {15'b111111100011010,i_sw0};
-   wire [31:0]  i_botton;
-   assign i_botton = {27'b0,BTND, BTNR, BTNL, BTNU, BTNC}; 
+   wire [4:0]  i_boton;
+   assign i_boton = {BTND, BTNR, BTNL, BTNU, BTNC}; 
    wire [5:0]  ram_awid;
    wire [31:0] ram_awaddr;
    wire [7:0]  ram_awlen;
@@ -136,6 +137,7 @@ module rvfpgasim
    wire [31:0] dmi_reg_wdata;
    wire [31:0] dmi_reg_rdata;
    wire        dmi_hard_reset;
+   wire [15:0] o_leds;
    
    axi_mem_wrapper
      #(.ID_WIDTH  (`RV_LSU_BUS_TAG+2),
@@ -255,7 +257,7 @@ module rvfpgasim
       .o_ram_rready        (ram_rready),
       .i_ram_init_done     (1'b1),
       .i_ram_init_error    (1'b0),
-      .io_data_botton      (i_botton),
-      .io_data             ({i_sw,16'bz}));
+      .io_data_boton      (i_boton[4:0]),
+      .io_data             ({i_sw,o_leds}));
       
 endmodule

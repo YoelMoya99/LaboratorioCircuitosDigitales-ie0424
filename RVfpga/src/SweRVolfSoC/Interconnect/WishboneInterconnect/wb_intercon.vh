@@ -73,19 +73,19 @@ wire        wb_s2m_gpio_ack;
 wire        wb_s2m_gpio_err;
 wire        wb_s2m_gpio_rty;
 
-//Botton
-wire [31:0] wb_m2s_gpio_adr_btn;
-wire [31:0] wb_m2s_gpio_dat_btn;
-wire  [3:0] wb_m2s_gpio_sel_btn;
-wire        wb_m2s_gpio_we_btn;
-wire        wb_m2s_gpio_cyc_btn;
-wire        wb_m2s_gpio_stb_btn;
-wire  [2:0] wb_m2s_gpio_cti_btn;
-wire  [1:0] wb_m2s_gpio_bte_btn;
-wire [31:0] wb_s2m_gpio_dat_btn;
-wire        wb_s2m_gpio_ack_btn;
-wire        wb_s2m_gpio_err_btn;
-wire        wb_s2m_gpio_rty_btn;
+// GPIO Boton
+wire [31:0] wb_m2s_gpio_adr_boton;
+wire [31:0] wb_m2s_gpio_dat_boton;
+wire  [3:0] wb_m2s_gpio_sel_boton;
+wire        wb_m2s_gpio_we_boton;
+wire        wb_m2s_gpio_cyc_boton;
+wire        wb_m2s_gpio_stb_boton;
+wire  [2:0] wb_m2s_gpio_cti_boton;
+wire  [1:0] wb_m2s_gpio_bte_boton;
+wire [31:0] wb_s2m_gpio_dat_boton;
+wire        wb_s2m_gpio_ack_boton;
+wire        wb_s2m_gpio_err_boton;
+wire        wb_s2m_gpio_rty_boton;
 
 
 // PTC
@@ -193,19 +193,19 @@ wb_intercon wb_intercon0
     .wb_gpio_err_i      (wb_s2m_gpio_err),
     .wb_gpio_rty_i      (wb_s2m_gpio_rty),
 
-// Bottons
-    .wb_gpio_dat_o_btn      (wb_m2s_gpio_adr_btn),
-    .wb_gpio_adr_o_btn      (wb_m2s_gpio_dat_btn),
-    .wb_gpio_sel_o_btn      (wb_m2s_gpio_sel_btn),
-    .wb_gpio_we_o_btn,      (wb_m2s_gpio_we_btn),
-    .wb_gpio_cyc_o_btn      (wb_m2s_gpio_cyc_btn),
-    .wb_gpio_stb_o_btn      (wb_m2s_gpio_stb_btn),
-    .wb_gpio_cti_o_btn      (wb_m2s_gpio_cti_btn),
-    .wb_gpio_bte_o_btn      (wb_m2s_gpio_bte_btn),
-    .wb_gpio_dat_i_btn      (wb_s2m_gpio_dat_btn),
-    .wb_gpio_ack_i_btn      (wb_s2m_gpio_ack_btn),
-    . wb_gpio_err_i_btn      (wb_s2m_gpio_err_btn),
-    .wb_gpio_rty_i_btn      (wb_s2m_gpio_rty_btn),
+// GPIO Bottons
+    .wb_gpio_adr_o_boton      (wb_m2s_gpio_adr_boton),
+    .wb_gpio_dat_o_boton      (wb_m2s_gpio_dat_boton),
+    .wb_gpio_sel_o_boton      (wb_m2s_gpio_sel_boton),
+    .wb_gpio_we_o_boton      (wb_m2s_gpio_we_boton),
+    .wb_gpio_cyc_o_boton      (wb_m2s_gpio_cyc_boton),
+    .wb_gpio_stb_o_boton      (wb_m2s_gpio_stb_boton),
+    .wb_gpio_cti_o_boton      (wb_m2s_gpio_cti_boton),
+    .wb_gpio_bte_o_boton      (wb_m2s_gpio_bte_boton),
+    .wb_gpio_dat_i_boton      (wb_s2m_gpio_dat_boton),
+    .wb_gpio_ack_i_boton      (wb_s2m_gpio_ack_boton),
+    .wb_gpio_err_i_boton      (wb_s2m_gpio_err_boton),
+    .wb_gpio_rty_i_boton      (wb_s2m_gpio_rty_boton),
 
 
 // PTC
