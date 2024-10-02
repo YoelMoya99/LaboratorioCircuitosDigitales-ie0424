@@ -53,14 +53,12 @@ module rvfpganexys
     output wire        o_accel_mosi,
     input wire         i_accel_miso,
 
-   /* inout wire BTNU,
-    inout wire BTND,
-    inout wire BTNL,
-    inout wire BTNR,
-    inout wire BTNC, */
-
     inout wire [4:0] i_boton,
 
+    // salidas para los leds...
+    output wire led_GREEN,
+    output wire led_RED,
+    output wire led_BLUE,
 
     output wire        accel_sclk);
 
@@ -87,7 +85,7 @@ module rvfpganexys
    AXI_BUS #(32, 64, 6, 1) mem();
    AXI_BUS #(32, 64, 6, 1) cpu();
 
-   assign cpu.aw_atop = 6'd0;
+   assign cpu.aw_atop = 6'd0; 
    assign cpu.aw_user = 1'b0;
    assign cpu.ar_user = 1'b0;
    assign cpu.w_user = 1'b0;
@@ -271,6 +269,9 @@ module rvfpganexys
       .o_accel_cs_n   (o_accel_cs_n),
       .o_accel_mosi   (o_accel_mosi),
       .io_data_boton  (i_boton[4:0]),
+      .pwm_led_GREEN  (led_GREEN),
+      .pwm_led_BLUE   (led_BLUE),
+      .pwm_led_RED    (led_RED),
       .i_accel_miso   (i_accel_miso));
 
    always @(posedge clk_core) begin

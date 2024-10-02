@@ -102,6 +102,50 @@ wire        wb_s2m_ptc_ack;
 wire        wb_s2m_ptc_err;
 wire        wb_s2m_ptc_rty;
 
+// PTC RED
+wire [31:0] wb_m2s_ptc_adr_RED;
+wire [31:0] wb_m2s_ptc_dat_RED;
+wire  [3:0] wb_m2s_ptc_sel_RED;
+wire        wb_m2s_ptc_we_RED;
+wire        wb_m2s_ptc_cyc_RED;
+wire        wb_m2s_ptc_stb_RED;
+wire  [2:0] wb_m2s_ptc_cti_RED;
+wire  [1:0] wb_m2s_ptc_bte_RED;
+wire [31:0] wb_s2m_ptc_dat_RED;
+wire        wb_s2m_ptc_ack_RED;
+wire        wb_s2m_ptc_err_RED;
+wire        wb_s2m_ptc_rty_RED;
+
+// PTC BLUE
+wire [31:0] wb_m2s_ptc_adr_BLUE;
+wire [31:0] wb_m2s_ptc_dat_BLUE;
+wire  [3:0] wb_m2s_ptc_sel_BLUE;
+ wire        wb_m2s_ptc_we_BLUE;
+wire        wb_m2s_ptc_cyc_BLUE;
+wire        wb_m2s_ptc_stb_BLUE;
+wire  [2:0] wb_m2s_ptc_cti_BLUE;
+wire  [1:0] wb_m2s_ptc_bte_BLUE;
+wire [31:0] wb_s2m_ptc_dat_BLUE;
+wire        wb_s2m_ptc_ack_BLUE;
+wire        wb_s2m_ptc_err_BLUE;
+wire        wb_s2m_ptc_rty_BLUE;
+
+// PTC GREEN
+wire [31:0] wb_m2s_ptc_adr_GREEN;
+wire [31:0] wb_m2s_ptc_dat_GREEN;
+wire  [3:0] wb_m2s_ptc_sel_GREEN;
+wire        wb_m2s_ptc_we_GREEN;
+wire        wb_m2s_ptc_cyc_GREEN;
+wire        wb_m2s_ptc_stb_GREEN;
+wire  [2:0] wb_m2s_ptc_cti_GREEN;
+wire  [1:0] wb_m2s_ptc_bte_GREEN;
+wire [31:0] wb_s2m_ptc_dat_GREEN;
+wire        wb_s2m_ptc_ack_GREEN;
+wire        wb_s2m_ptc_err_GREEN;
+wire        wb_s2m_ptc_rty_GREEN;
+
+
+
 // SPI
 wire [31:0] wb_m2s_spi_accel_adr;
 wire [31:0] wb_m2s_spi_accel_dat;
@@ -221,6 +265,51 @@ wb_intercon wb_intercon0
     .wb_ptc_ack_i      (wb_s2m_ptc_ack),
     .wb_ptc_err_i      (wb_s2m_ptc_err),
     .wb_ptc_rty_i      (wb_s2m_ptc_rty),
+
+// PTC RED
+    .wb_ptc_adr_o_RED      (wb_m2s_ptc_adr_RED),
+    .wb_ptc_dat_o_RED      (wb_m2s_ptc_dat_RED),
+    .wb_ptc_sel_o_RED      (wb_m2s_ptc_sel_RED),
+    .wb_ptc_we_o_RED        (wb_m2s_ptc_we_RED),
+    .wb_ptc_cyc_o_RED      (wb_m2s_ptc_cyc_RED),
+    .wb_ptc_stb_o_RED      (wb_m2s_ptc_stb_RED),
+    .wb_ptc_cti_o_RED      (wb_m2s_ptc_cti_RED),
+    .wb_ptc_bte_o_RED      (wb_m2s_ptc_bte_RED),
+    .wb_ptc_dat_i_RED      (wb_s2m_ptc_dat_RED),
+    .wb_ptc_ack_i_RED      (wb_s2m_ptc_ack_RED),
+    .wb_ptc_err_i_RED      (wb_s2m_ptc_err_RED),
+    .wb_ptc_rty_i_RED      (wb_s2m_ptc_rty_RED),
+
+
+// PTC BLUE
+    .wb_ptc_adr_o_BLUE      (wb_m2s_ptc_adr_BLUE),
+    .wb_ptc_dat_o_BLUE      (wb_m2s_ptc_dat_BLUE),
+    .wb_ptc_sel_o_BLUE      (wb_m2s_ptc_sel_BLUE),
+    .wb_ptc_we_o_BLUE        (wb_m2s_ptc_we_BLUE),
+    .wb_ptc_cyc_o_BLUE      (wb_m2s_ptc_cyc_BLUE),
+    .wb_ptc_stb_o_BLUE      (wb_m2s_ptc_stb_BLUE),
+    .wb_ptc_cti_o_BLUE      (wb_m2s_ptc_cti_BLUE),
+    .wb_ptc_bte_o_BLUE      (wb_m2s_ptc_bte_BLUE),
+    .wb_ptc_dat_i_BLUE      (wb_s2m_ptc_dat_BLUE),
+    .wb_ptc_ack_i_BLUE      (wb_s2m_ptc_ack_BLUE),
+    .wb_ptc_err_i_BLUE      (wb_s2m_ptc_err_BLUE),
+    .wb_ptc_rty_i_BLUE      (wb_s2m_ptc_rty_BLUE),
+
+// PTC GREEN
+    .wb_ptc_adr_o_GREEN      (wb_m2s_ptc_adr_GREEN),
+    .wb_ptc_dat_o_GREEN      (wb_m2s_ptc_dat_GREEN),
+    .wb_ptc_sel_o_GREEN      (wb_m2s_ptc_sel_GREEN),
+     .wb_ptc_we_o_GREEN       (wb_m2s_ptc_we_GREEN),
+    .wb_ptc_cyc_o_GREEN      (wb_m2s_ptc_cyc_GREEN),
+    .wb_ptc_stb_o_GREEN      (wb_m2s_ptc_stb_GREEN),
+    .wb_ptc_cti_o_GREEN      (wb_m2s_ptc_cti_GREEN),
+    .wb_ptc_bte_o_GREEN      (wb_m2s_ptc_bte_GREEN),
+    .wb_ptc_dat_i_GREEN      (wb_s2m_ptc_dat_GREEN),
+    .wb_ptc_ack_i_GREEN      (wb_s2m_ptc_ack_GREEN),
+    .wb_ptc_err_i_GREEN      (wb_s2m_ptc_err_GREEN),
+    .wb_ptc_rty_i_GREEN      (wb_s2m_ptc_rty_GREEN),
+
+
 // SPI
     .wb_spi_accel_adr_o (wb_m2s_spi_accel_adr),
     .wb_spi_accel_dat_o (wb_m2s_spi_accel_dat),

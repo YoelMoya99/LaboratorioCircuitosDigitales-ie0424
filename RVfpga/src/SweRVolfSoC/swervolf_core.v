@@ -82,6 +82,11 @@ module swervolf_core
 
     inout wire [4:0]  io_data_boton,
 
+    // salidas del modulo ptc usadas para el led tricolor 
+    output wire pwm_led_RED,
+    output wire pwm_led_BLUE,
+    output wire pwm_led_GREEN,
+
     output wire [ 7          :0] AN,
     output wire [ 6          :0] Digits_Bits,
     output wire        o_accel_sclk,
@@ -89,7 +94,7 @@ module swervolf_core
     output wire        o_accel_mosi,
     input wire         i_accel_miso);
 
-   localparam BOOTROM_SIZE = 32'h1000;
+    localparam BOOTROM_SIZE = 32'h1000;
 
    wire        rst_n = rstn;
    wire        timer_irq;
@@ -414,6 +419,76 @@ module swervolf_core
         .gate_clk_pad_i (),
         .capt_pad_i (),
         .pwm_pad_o (),
+        .oen_padoen_o ()
+   );
+
+// ----- PTC RED -------
+   wire        ptc_irq_RED;
+
+   ptc_top timer_ptc_RED(
+        .wb_clk_i     (clk), 
+        .wb_rst_i     (wb_rst), 
+        .wb_cyc_i     (wb_m2s_ptc_cyc_RED), 
+        .wb_adr_i     ({2'b0,wb_m2s_ptc_adr_RED[5:2],2'b0}), 
+        .wb_dat_i     (wb_m2s_ptc_dat_RED), 
+        .wb_sel_i     (4'b1111),
+        .wb_we_i      (wb_m2s_ptc_we_RED), 
+        .wb_stb_i     (wb_m2s_ptc_stb_RED), 
+        .wb_dat_o     (wb_s2m_ptc_dat_RED),
+        .wb_ack_o     (wb_s2m_ptc_ack_RED), 
+        .wb_err_o     (wb_s2m_ptc_err_RED),
+        .wb_inta_o    (ptc_irq_RED),
+        // External PTC Interface
+        .gate_clk_pad_i (),
+        .capt_pad_i (),
+        .pwm_pad_o (pwm_led_RED),
+        .oen_padoen_o ()
+   );
+
+// ----- PTC BLUE -------
+   wire        ptc_irq_BLUE;
+
+   ptc_top timer_ptc_BLUE(
+        .wb_clk_i     (clk), 
+        .wb_rst_i     (wb_rst), 
+        .wb_cyc_i     (wb_m2s_ptc_cyc_BLUE), 
+        .wb_adr_i     ({2'b0,wb_m2s_ptc_adr_BLUE[5:2],2'b0}), 
+        .wb_dat_i     (wb_m2s_ptc_dat_BLUE), 
+        .wb_sel_i     (4'b1111),
+        .wb_we_i      (wb_m2s_ptc_we_BLUE), 
+        .wb_stb_i     (wb_m2s_ptc_stb_BLUE), 
+        .wb_dat_o     (wb_s2m_ptc_dat_BLUE),
+        .wb_ack_o     (wb_s2m_ptc_ack_BLUE), 
+        .wb_err_o     (wb_s2m_ptc_err_BLUE),
+        .wb_inta_o    (ptc_irq_BLUE),
+        // External PTC Interface
+        .gate_clk_pad_i (),
+        .capt_pad_i (),
+        .pwm_pad_o (pwm_led_BLUE),
+        .oen_padoen_o ()
+   );
+
+
+// ----- PTC GREEN -------
+   wire        ptc_irq_GREEN;
+
+   ptc_top timer_ptc_GREEN(
+        .wb_clk_i     (clk), 
+        .wb_rst_i     (wb_rst), 
+        .wb_cyc_i     (wb_m2s_ptc_cyc_GREEN), 
+        .wb_adr_i     ({2'b0,wb_m2s_ptc_adr_GREEN[5:2],2'b0}), 
+        .wb_dat_i     (wb_m2s_ptc_dat_GREEN), 
+        .wb_sel_i     (4'b1111),
+        .wb_we_i      (wb_m2s_ptc_we_GREEN), 
+        .wb_stb_i     (wb_m2s_ptc_stb_GREEN), 
+        .wb_dat_o     (wb_s2m_ptc_dat_GREEN),
+        .wb_ack_o     (wb_s2m_ptc_ack_GREEN), 
+        .wb_err_o     (wb_s2m_ptc_err_GREEN),
+        .wb_inta_o    (ptc_irq_GREEN),
+        // External PTC Interface
+        .gate_clk_pad_i (),
+        .capt_pad_i (),
+        .pwm_pad_o (pwm_led_GREEN),
         .oen_padoen_o ()
    );
 
