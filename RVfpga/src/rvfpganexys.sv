@@ -95,10 +95,7 @@ module rvfpganexys
    assign cpu.r_user = 1'b0;
    assign mem.b_user = 1'b0;
    assign mem.r_user = 1'b0;
-
-   wire [31:0]  i_boton;
-   assign i_boton = {27'b0,BTND, BTNR, BTNL, BTNU, BTNC}; 
-
+   
    axi_cdc_intf
      #(.AXI_USER_WIDTH (1),
        .AXI_ADDR_WIDTH (32),
