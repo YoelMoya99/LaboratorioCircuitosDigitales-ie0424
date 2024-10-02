@@ -33,7 +33,7 @@ while(1){
         // Si el valor de los botones es igual a BTNC cambiamos la velocidad
         if (boton_value & 0x1){
             if (DELAY <= 50){
-                DELAY = 3000000;
+                DELAY = 3000000;  // restableciendo valor del delay cuando llegue a cero.
             }
             DELAY = DELAY - 500000;
         }
