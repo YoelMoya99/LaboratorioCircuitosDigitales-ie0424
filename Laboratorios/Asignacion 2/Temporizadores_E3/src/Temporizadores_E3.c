@@ -34,6 +34,8 @@
 #define PERCENT_INC  0x0C
 #define OE           0x08
 
+void writeWorkCycle(int workCycle, int memAddr);
+int calcWorkCycle(int amountSWs);
 
 int main (void)
 {
@@ -50,92 +52,77 @@ WRITE_MEMORY(CTRL_B, 1);
 WRITE_MEMORY(HRC_B, HRC_IN_Value);
 WRITE_MEMORY(LRC_B, HRC_IN_Value);
 
-
 WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
 
-int Switches, temp_green, temp_blue;
+int Switches, temp_red, temp_green, temp_blue;
 
-while (1)
-{
+while (1){
+
+    // lectura del valor de los switches.
     Switches = READ_MEMORY(GPIO_SWs);
     Switches = Switches >> 16;
 
-    switch (Switches & 0x1F)
-    {
-    case 0x1:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value + PERCENT_INC);
-        break;
-    case 0x3:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value + 2*PERCENT_INC);
-        break;
-    case 0x7:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value + 3*PERCENT_INC);
-        break;
-    case 0xF:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value + 4*PERCENT_INC);
-        break;
-    case 0x1F:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value + 5*PERCENT_INC);
-        break;
-    default:
-        WRITE_MEMORY(LRC_R, LRC_IN_Value);
-        //WRITE_MEMORY(CTRL_R, 0);
-        break;
-    } 
+    // Escritura del ciclo de trabajo en los switches R
+    temp_red = Switches & 0x1F;
+    temp_red = calcWorkCycle(temp_red);
+    writeWorkCycle(temp_red, LRC_R);
 
-    temp_blue = Switches >> 5;
-
-    switch (temp_blue & 0x1F)
-    {
-    case 0x1:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value + PERCENT_INC);
-        break;
-    case 0x3:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value + 2*PERCENT_INC);
-        break;
-    case 0x7:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value + 3*PERCENT_INC);
-        break;
-    case 0xF:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value + 4*PERCENT_INC);
-        break;
-    case 0x1F:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value + 5*PERCENT_INC);
-        break;
-    default:
-        WRITE_MEMORY(LRC_B, LRC_IN_Value);
-        //WRITE_MEMORY(CTRL_B, 0);
-        break;
-    } 
-
+    // Escritura del ciclo de trabajo en los switches G
     temp_green = Switches >> 10;
+    temp_green = temp_green & 0x1F;
+    temp_green = calcWorkCycle(temp_green);
+    writeWorkCycle(temp_green, LRC_G);
+
+    // Escritura del ciclo de trabajo en los switches B
+    temp_blue = Switches >> 5;
+    temp_blue = temp_blue & 0x1F;
+    temp_blue = calcWorkCycle(temp_blue);
+    writeWorkCycle(temp_blue, LRC_B);
+
+    }
+}
+
+// ===========================================================================
+//                              Funciones del Programa
+// ===========================================================================
 
 
-    switch (temp_green & 0x1F)
-    {
-    case 0x1:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value + PERCENT_INC);
-        break;
-    case 0x3:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value + 2*PERCENT_INC);
-        break;
-    case 0x7:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value + 3*PERCENT_INC);
-        break;
-    case 0xF:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value + 4*PERCENT_INC);
-        break;
-    case 0x1F:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value + 5*PERCENT_INC);
-        break;
-    default:
-        WRITE_MEMORY(LRC_G, LRC_IN_Value);
-        //WRITE_MEMORY(CTRL_G, 0);
-        break;
+void writeWorkCycle(int workCycle, int memAddr){
+
+    switch (workCycle){
+        case 0x1:
+            WRITE_MEMORY(memAddr, LRC_IN_Value + PERCENT_INC);
+            break;
+        case 0x2:
+            WRITE_MEMORY(memAddr, LRC_IN_Value + 2*PERCENT_INC);
+            break;
+        case 0x3:
+            WRITE_MEMORY(memAddr, LRC_IN_Value + 3*PERCENT_INC);
+            break;
+        case 0x4:
+            WRITE_MEMORY(memAddr, LRC_IN_Value + 4*PERCENT_INC);
+            break;
+        case 0x5:
+            WRITE_MEMORY(memAddr, LRC_IN_Value + 5*PERCENT_INC);
+            break;
+        default:
+            WRITE_MEMORY(memAddr, LRC_IN_Value);
+            break;
     } 
-
 }
 
+int calcWorkCycle(int amountSWs){
+   
+    int CantSWs = 0;
+    int i; 
+    
+    for (i = 0; i < 5; i++){
 
+        if (amountSWs & 0x1){
+            CantSWs++;
+        }
+
+        amountSWs = amountSWs >> 1;
+    }
+    return CantSWs;
 }
-
