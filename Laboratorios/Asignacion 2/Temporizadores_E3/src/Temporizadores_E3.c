@@ -37,53 +37,54 @@
 void writeWorkCycle(int workCycle, int memAddr);
 int calcWorkCycle(int amountSWs);
 
-int main (void)
-{
+int main (void){
 
-WRITE_MEMORY(CTRL_R, 1);
-WRITE_MEMORY(HRC_R, HRC_IN_Value);
-WRITE_MEMORY(LRC_R, HRC_IN_Value);
-
-WRITE_MEMORY(CTRL_G, 1);
-WRITE_MEMORY(HRC_G, HRC_IN_Value);
-WRITE_MEMORY(LRC_G, HRC_IN_Value);
-
-WRITE_MEMORY(CTRL_B, 1);
-WRITE_MEMORY(HRC_B, HRC_IN_Value);
-WRITE_MEMORY(LRC_B, HRC_IN_Value);
-
-WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
-
-unsigned int Switches, temp_red, temp_green, temp_blue;
-
-while (1){
-
-
-    Switches = temp_red = temp_green = temp_blue = 0;
-
+    WRITE_MEMORY(CTRL_R, 1);
+    WRITE_MEMORY(HRC_R, HRC_IN_Value);
+    WRITE_MEMORY(LRC_R, HRC_IN_Value);
     
-    // lectura del valor de los switches.
-    Switches = READ_MEMORY(GPIO_SWs);
-    Switches = Switches >> 16;
+    WRITE_MEMORY(CTRL_G, 1);
+    WRITE_MEMORY(HRC_G, HRC_IN_Value);
+    WRITE_MEMORY(LRC_G, HRC_IN_Value);
+    
+    WRITE_MEMORY(CTRL_B, 1);
+    WRITE_MEMORY(HRC_B, HRC_IN_Value);
+    WRITE_MEMORY(LRC_B, HRC_IN_Value);
+    
+    WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
+    
+    unsigned int Switches, TempSwitches, temp_red, temp_green, temp_blue;
 
-    // Escritura del ciclo de trabajo en los switches R
-    temp_red = Switches & 0x1F;
-    temp_red = calcWorkCycle(temp_red);
-    writeWorkCycle(temp_red, LRC_R);
+    while (1){
 
-    // Escritura del ciclo de trabajo en los switches G
-    temp_green = Switches >> 10;
-    temp_green = temp_green & 0x1F;
-    temp_green = calcWorkCycle(temp_green);
-    writeWorkCycle(temp_green, LRC_G);
+        // lectura del valor de los switches.
+        Switches = READ_MEMORY(GPIO_SWs);
+        Switches = Switches >> 16;
 
-    // Escritura del ciclo de trabajo en los switches B
-    temp_blue = Switches >> 5;
-    temp_blue = temp_blue & 0x1F;
-    temp_blue = calcWorkCycle(temp_blue);
-    writeWorkCycle(temp_blue, LRC_B);
+        if (TempSwitches != Switches) {
 
-    WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
+            temp_red = temp_green = temp_blue = 0;
+            
+            // Escritura del ciclo de trabajo en los switches R
+            temp_red = Switches & 0x1F;
+            temp_red = calcWorkCycle(temp_red);
+            writeWorkCycle(temp_red, LRC_R);
+
+            // Escritura del ciclo de trabajo en los switches G
+            temp_green = Switches >> 10;
+            temp_green = temp_green & 0x1F;
+            temp_green = calcWorkCycle(temp_green);
+            writeWorkCycle(temp_green, LRC_G);
+
+            // Escritura del ciclo de trabajo en los switches B
+            temp_blue = Switches >> 5;
+            temp_blue = temp_blue & 0x1F;
+            temp_blue = calcWorkCycle(temp_blue);
+            writeWorkCycle(temp_blue, LRC_B);
+
+            WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
+            TempSwitches = Switches;
+        }
     }
 }
 
