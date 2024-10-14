@@ -61,7 +61,6 @@ int main (void){
 
         if (TempSwitches != Switches) {
 
-
             // Escritura del ciclo de trabajo en los switches R
             temp_red = Switches & 0x1F;
             temp_red = calcWorkCycle(temp_red);
@@ -79,7 +78,7 @@ int main (void){
             temp_blue = calcWorkCycle(temp_blue);
             writeWorkCycle(temp_blue, HRC_B);
 
-            WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
+            // WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
             TempSwitches = Switches;
         }
     }
@@ -91,22 +90,6 @@ int main (void){
 
 
 void writeWorkCycle(int workCycle, int memAddr){
-
-
-    /*
-    if (workCycle == 0x1) {
-    WRITE_MEMORY(memAddr, LRC_IN_Value + PERCENT_INC);
-    } else if (workCycle == 0x2) {
-    WRITE_MEMORY(memAddr, LRC_IN_Value + 2 * PERCENT_INC);
-    } else if (workCycle == 0x3) {
-    WRITE_MEMORY(memAddr, LRC_IN_Value + 3 * PERCENT_INC);
-    } else if (workCycle == 0x4) {
-    WRITE_MEMORY(memAddr, LRC_IN_Value + 4 * PERCENT_INC);
-    } else if (workCycle == 0x5) {
-    WRITE_MEMORY(memAddr, LRC_IN_Value + 5 * PERCENT_INC);
-    } else {
-    WRITE_MEMORY(memAddr, 0x40);
-    } */
 
     switch (workCycle){
         case 0x1:
@@ -131,7 +114,7 @@ void writeWorkCycle(int workCycle, int memAddr){
 }
 
 int calcWorkCycle(int amountSWs){
-   
+    
     int CantSWs = 0;
     int i; 
     
