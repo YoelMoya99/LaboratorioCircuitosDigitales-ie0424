@@ -1,5 +1,6 @@
 // memory-mapped I/O addresses
 
+#define GPIO_LEDs   0x80001404
 //Direcciones de memoria para encender el LED azul con el PTC asociado
 #define GPIO_LED_BLUE 0x80001280
 #define  LRC_B 0x80001288
@@ -18,8 +19,7 @@
 #define  HRC_R 0x80001244
 #define CTRL_R 0x8000124C
 
-// Direcciones de boton y de gpio para INOUT
-#define GPIO_Boton 0x80001800
+// Direcciones de gpio para INOUT
 #define GPIO_INOUT 0x80001408
 #define GPIO_SWs   0x80001400
 
@@ -54,10 +54,14 @@ WRITE_MEMORY(LRC_B, HRC_IN_Value);
 
 WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
 
-int Switches, temp_red, temp_green, temp_blue;
+unsigned int Switches, temp_red, temp_green, temp_blue;
 
 while (1){
 
+
+    Switches = temp_red = temp_green = temp_blue = 0;
+
+    
     // lectura del valor de los switches.
     Switches = READ_MEMORY(GPIO_SWs);
     Switches = Switches >> 16;
@@ -79,6 +83,7 @@ while (1){
     temp_blue = calcWorkCycle(temp_blue);
     writeWorkCycle(temp_blue, LRC_B);
 
+    WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
     }
 }
 
@@ -88,6 +93,22 @@ while (1){
 
 
 void writeWorkCycle(int workCycle, int memAddr){
+
+
+    /*
+    if (workCycle == 0x1) {
+    WRITE_MEMORY(memAddr, LRC_IN_Value + PERCENT_INC);
+    } else if (workCycle == 0x2) {
+    WRITE_MEMORY(memAddr, LRC_IN_Value + 2 * PERCENT_INC);
+    } else if (workCycle == 0x3) {
+    WRITE_MEMORY(memAddr, LRC_IN_Value + 3 * PERCENT_INC);
+    } else if (workCycle == 0x4) {
+    WRITE_MEMORY(memAddr, LRC_IN_Value + 4 * PERCENT_INC);
+    } else if (workCycle == 0x5) {
+    WRITE_MEMORY(memAddr, LRC_IN_Value + 5 * PERCENT_INC);
+    } else {
+    WRITE_MEMORY(memAddr, 0x40);
+    } */
 
     switch (workCycle){
         case 0x1:
