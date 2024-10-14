@@ -29,8 +29,8 @@
 #define WRITE_MEMORY(dir, value) {(*(volatile unsigned *)dir) = (value);}
 
 //Valores para determinar el ciclo de trabajo de los leds
-#define HRC_IN_Value 0x40
-#define LRC_IN_Value 0x40
+#define HRC_IN_Value 0x80
+#define LRC_IN_Value 0x80
 #define PERCENT_INC  0x0C
 #define OE           0x08
 
@@ -40,16 +40,14 @@ int calcWorkCycle(int amountSWs);
 int main (void){
 
     WRITE_MEMORY(CTRL_R, 1);
-    WRITE_MEMORY(HRC_R, HRC_IN_Value);
-    WRITE_MEMORY(LRC_R, HRC_IN_Value);
+    WRITE_MEMORY(LRC_R, LRC_IN_Value);
     
     WRITE_MEMORY(CTRL_G, 1);
-    WRITE_MEMORY(HRC_G, HRC_IN_Value);
-    WRITE_MEMORY(LRC_G, HRC_IN_Value);
+    WRITE_MEMORY(LRC_G, LRC_IN_Value);
     
     WRITE_MEMORY(CTRL_B, 1);
-    WRITE_MEMORY(HRC_B, HRC_IN_Value);
-    WRITE_MEMORY(LRC_B, HRC_IN_Value);
+    WRITE_MEMORY(LRC_B, LRC_IN_Value);
+    
     
     WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
     
@@ -63,24 +61,23 @@ int main (void){
 
         if (TempSwitches != Switches) {
 
-            temp_red = temp_green = temp_blue = 0;
-            
+
             // Escritura del ciclo de trabajo en los switches R
             temp_red = Switches & 0x1F;
             temp_red = calcWorkCycle(temp_red);
-            writeWorkCycle(temp_red, LRC_R);
+            writeWorkCycle(temp_red, HRC_R);
 
             // Escritura del ciclo de trabajo en los switches G
             temp_green = Switches >> 10;
             temp_green = temp_green & 0x1F;
             temp_green = calcWorkCycle(temp_green);
-            writeWorkCycle(temp_green, LRC_G);
+            writeWorkCycle(temp_green, HRC_G);
 
             // Escritura del ciclo de trabajo en los switches B
             temp_blue = Switches >> 5;
             temp_blue = temp_blue & 0x1F;
             temp_blue = calcWorkCycle(temp_blue);
-            writeWorkCycle(temp_blue, LRC_B);
+            writeWorkCycle(temp_blue, HRC_B);
 
             WRITE_MEMORY(GPIO_LEDs, Switches);  // verificando si es problema de los switches
             TempSwitches = Switches;
@@ -113,22 +110,22 @@ void writeWorkCycle(int workCycle, int memAddr){
 
     switch (workCycle){
         case 0x1:
-            WRITE_MEMORY(memAddr, LRC_IN_Value + PERCENT_INC);
+            WRITE_MEMORY(memAddr, HRC_IN_Value - PERCENT_INC);   // 128 - 12 = 116 - 64 = 102
             break;
         case 0x2:
-            WRITE_MEMORY(memAddr, LRC_IN_Value + 2*PERCENT_INC);
+            WRITE_MEMORY(memAddr, HRC_IN_Value - 2*PERCENT_INC); // 128 - 24 = 104 - 64 = 40
             break;
         case 0x3:
-            WRITE_MEMORY(memAddr, LRC_IN_Value + 3*PERCENT_INC);
+            WRITE_MEMORY(memAddr, HRC_IN_Value - 3*PERCENT_INC); // 128 - 36 = 92 - 64 = 28
             break;
         case 0x4:
-            WRITE_MEMORY(memAddr, LRC_IN_Value + 4*PERCENT_INC);
+            WRITE_MEMORY(memAddr, HRC_IN_Value - 4*PERCENT_INC); // 128 - 48 = 80 - 64 = 16
             break;
         case 0x5:
-            WRITE_MEMORY(memAddr, LRC_IN_Value + 5*PERCENT_INC);
+            WRITE_MEMORY(memAddr, HRC_IN_Value - 5*PERCENT_INC); // 128 - 60 = 68 - 64 = 4 
             break;
         default:
-            WRITE_MEMORY(memAddr, LRC_IN_Value);
+            WRITE_MEMORY(memAddr, HRC_IN_Value);
             break;
     } 
 }
