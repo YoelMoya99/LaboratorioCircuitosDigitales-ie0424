@@ -1,6 +1,5 @@
 // memory-mapped I/O addresses
 
-
 //Direcciones de memoria para encender el LED azul con el PTC asociado
 #define GPIO_LED_BLUE 0x80001280
 #define  LRC_B 0x80001288
@@ -47,7 +46,6 @@ int main (void){
     
     WRITE_MEMORY(CTRL_B, 1);
     WRITE_MEMORY(LRC_B, LRC_IN_Value);
-    
     
     WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
     
