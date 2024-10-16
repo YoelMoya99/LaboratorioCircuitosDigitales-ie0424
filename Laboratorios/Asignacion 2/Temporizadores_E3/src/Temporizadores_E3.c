@@ -1,6 +1,6 @@
 // memory-mapped I/O addresses
 
-#define GPIO_LEDs   0x80001404
+
 //Direcciones de memoria para encender el LED azul con el PTC asociado
 #define GPIO_LED_BLUE 0x80001280
 #define  LRC_B 0x80001288
@@ -52,6 +52,7 @@ int main (void){
     WRITE_MEMORY(GPIO_INOUT, 0xFFFF);
     
     unsigned int Switches, TempSwitches, temp_red, temp_green, temp_blue;
+    TempSwitches = 1;
 
     while (1){
 
