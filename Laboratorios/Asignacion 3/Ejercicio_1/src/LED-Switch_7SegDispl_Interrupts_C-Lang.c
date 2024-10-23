@@ -22,9 +22,21 @@
 
 #define Select_INT      0x80001018
 
+
+
+// ------------ PTC --------------
+#define INT 0x40
+#define INTERRUPT_START 0x21
+#define HRC_Value 0x2FAF080
+#define LRC_Value 0x2FAF080
+
+
+
+
 int SegDisplCount=0;
 
 extern D_PSP_DATA_SECTION D_PSP_ALIGNED(1024) pspInterruptHandler_t G_Ext_Interrupt_Handlers[8];
+
 
 
 void GPIO_ISR(void)
@@ -110,10 +122,31 @@ void GPIO_Initialization(void)
   M_PSP_WRITE_REGISTER_32(RGPIO_CTRL, 0x1);           /* RGPIO_CTRL */
 }
 
+static int count;
+
+void PTC_Initialization(void){
+  count = 0;
+  M_PSP_WRITE_REGISTER_32(RPTC_LRC, LRC_Value); // una interrupcion no deseada
+  M_PSP_WRITE_REGISTER_32(RPTC_HRC, HRC_Value); // Colocando en ambos el mismo valor para evitar
+  M_PSP_WRITE_REGISTER_32(RPTC_CTRL, INTERRUPT_START);     // Habilitando interrupciones y contador, asi como
+
+}
+
+
+void PTC_ISR(void){
+  
+
+  M_PSP_WRITE_REGISTER_32(RPTC_CTRL, INTERRUPT_START);  // Borando interrupt PTC
+  count++;
+  M_PSP_WRITE_REGISTER_32(SegDig_ADDR, count);
+  bspClearExtInterrupt(3);                             // Borrando interrpcion externa
+
+}
+
+
 
 int main(void)
 {
-  int count=0, i;
 
   /* INITIALIZE THE INTERRUPT SYSTEM */
   DefaultInitialization();                            /* Default initialization */
@@ -121,23 +154,22 @@ int main(void)
 
   /* INITIALIZE INTERRUPT LINE IRQ4 */
   ExternalIntLine_Initialization(4, 6, GPIO_ISR);     /* Initialize line IRQ4 with a priority of 6. Set GPIO_ISR as the Interrupt Service Routine */
-  M_PSP_WRITE_REGISTER_32(Select_INT, 0x1);           /* Connect the GPIO interrupt to the IRQ4 interrupt line */
+  ExternalIntLine_Initialization(3, 7, PTC_ISR);
+  M_PSP_WRITE_REGISTER_32(Select_INT, 0x3);           /* Connect the GPIO interrupt to the IRQ4 interrupt line */
 
   /* INITIALIZE THE PERIPHERALS */
   GPIO_Initialization();                              /* Initialize the GPIO */
+  PTC_Initialization();
   M_PSP_WRITE_REGISTER_32(SegEn_ADDR, 0x0);           /* Initialize the 7-Seg Displays */
 
   /* ENABLE INTERRUPTS */
   pspInterruptsEnable();                              /* Enable all interrupts in mstatus CSR */
   M_PSP_SET_CSR(D_PSP_MIE_NUM, D_PSP_MIE_MEIE_MASK);  /* Enable external interrupts in mie CSR */
 
-  while (1) {
-    /* Increase 7-Seg Displays */
-    M_PSP_WRITE_REGISTER_32(SegDig_ADDR, count);
-    count++;
 
-    /* Delay */
-    for(i=0;i<50000000;i++);
-  }
+  while (1) {
+    /* Lo hace PTC */
+   
 }
 
+}
