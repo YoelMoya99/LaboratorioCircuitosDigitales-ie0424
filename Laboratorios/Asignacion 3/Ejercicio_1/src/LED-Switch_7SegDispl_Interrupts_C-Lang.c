@@ -134,7 +134,7 @@ void PTC_Initialization(void){
 
 
 void PTC_ISR(void){
-  
+  // Funcion de interrupciones PTC
 
   M_PSP_WRITE_REGISTER_32(RPTC_CTRL, INTERRUPT_START);  // Borando interrupt PTC
   count++;
