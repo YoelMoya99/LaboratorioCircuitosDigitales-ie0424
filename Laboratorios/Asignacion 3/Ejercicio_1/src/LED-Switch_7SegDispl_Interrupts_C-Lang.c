@@ -138,6 +138,11 @@ void PTC_ISR(void){
 
   M_PSP_WRITE_REGISTER_32(RPTC_CTRL, INTERRUPT_START);  // Borando interrupt PTC
   count++;
+
+  if (count > 9){
+    pspExtInterruptSetPriority(3,4);                // deteniendo la interrupcion
+  }
+
   M_PSP_WRITE_REGISTER_32(SegDig_ADDR, count);
   bspClearExtInterrupt(3);                             // Borrando interrpcion externa
 
