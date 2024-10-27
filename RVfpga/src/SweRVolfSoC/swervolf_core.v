@@ -228,6 +228,7 @@ module swervolf_core
      (.i_clk            (clk),
       .i_rst            (wb_rst),
       .gpio_irq         (gpio_irq),
+      .gpio_irq_boton   (gpio_irq_boton),
       .ptc_irq          (ptc_irq),
       .o_timer_irq      (timer_irq),
       .o_sw_irq3        (sw_irq3),

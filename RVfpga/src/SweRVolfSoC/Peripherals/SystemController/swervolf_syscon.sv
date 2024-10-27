@@ -28,6 +28,9 @@ module swervolf_syscon
   (input wire i_clk,
    input wire 	     i_rst,
    input wire        gpio_irq,
+
+   input wire       gpio_irq_boton,
+
    input wire        ptc_irq,
    output reg 	     o_timer_irq,
    output wire 	     o_sw_irq3,
@@ -127,9 +130,10 @@ module swervolf_syscon
       nmi_int_r <= nmi_int;
 
       // GPIO Interrupt through IRQ4. Enable by setting bit 0 of word 0x80001018
-      if (irq_gpio_enable & gpio_irq) begin
+      if (irq_gpio_enable & (gpio_irq | gpio_irq_boton)) begin
            sw_irq4 <= 1'b1;
       end
+      
 
       // Timer (PTC) Interrupt through IRQ3. Enable by setting bit 1 of word 0x80001018
       if (irq_ptc_enable & ptc_irq) begin
