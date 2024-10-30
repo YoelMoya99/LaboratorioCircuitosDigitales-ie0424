@@ -197,6 +197,8 @@ int main(void)
   pspInterruptsEnable();                              /* Enable all interrupts in mstatus CSR */
   M_PSP_SET_CSR(D_PSP_MIE_NUM, D_PSP_MIE_MEIE_MASK);  /* Enable external interrupts in mie CSR */
 
+  M_PSP_WRITE_REGISTER_32(SegEn_ADDR, 0xFF);
+
   while (1) {
     /* Lo hace PTC */
 }
