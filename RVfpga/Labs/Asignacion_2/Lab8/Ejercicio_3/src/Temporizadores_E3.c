@@ -1,18 +1,18 @@
 // memory-mapped I/O addresses
 
-//Direcciones de memoria para encender el LED azul con el PTC asociado
+// Direcciones de memoria para encender el LED azul con el PTC asociado
 #define GPIO_LED_BLUE 0x80001280
 #define  LRC_B 0x80001288
 #define  HRC_B 0x80001284
 #define CTRL_B 0x8000128C
 
-//Direcciones de memoria para encender el LED verde con el PTC asociado
+// Direcciones de memoria para encender el LED verde con el PTC asociado
 #define GPIO_LED_GREEN 0x800012C0
 #define  LRC_G 0x800012C8
 #define  HRC_G 0x800012C4
 #define CTRL_G 0x800012CC
 
-//Direcciones de memoria para encender el LED rojo con el PTC asociado
+// Direcciones de memoria para encender el LED rojo con el PTC asociado
 #define GPIO_LED_RED_Base 0x80001240
 #define  LRC_R 0x80001248
 #define  HRC_R 0x80001244
@@ -27,12 +27,13 @@
 #define READ_MEMORY(dir) (*(volatile unsigned *)dir)
 #define WRITE_MEMORY(dir, value) {(*(volatile unsigned *)dir) = (value);}
 
-//Valores para determinar el ciclo de trabajo de los leds
+// Valores para determinar el ciclo de trabajo de los leds
 #define HRC_IN_Value 0x80
 #define LRC_IN_Value 0x80
 #define PERCENT_INC  0x0C
 #define OE           0x08
 
+// Declara las funciones a utilizar en el codigo principal
 void writeWorkCycle(int workCycle, int memAddr);
 int calcWorkCycle(int amountSWs);
 
@@ -58,16 +59,19 @@ int main (void){
         Switches = READ_MEMORY(GPIO_SWs);
         Switches = Switches >> 16;
 
+        // Si el valor leido en los switches es distinto al valor leido
+        // anteriormente, se calcula el ciclo de trabajo y se escribe este
+        // en su registro correspondiente para cada uno de los leds
         if (TempSwitches != Switches) {
 
             // Escritura del ciclo de trabajo en los switches R
-            temp_red = Switches & 0x1F;
+            temp_red = Switches & 0x1F;          // Aisla el valor de switches
             temp_red = calcWorkCycle(temp_red);
             writeWorkCycle(temp_red, HRC_R);
 
             // Escritura del ciclo de trabajo en los switches G
-            temp_green = Switches >> 10;
-            temp_green = temp_green & 0x1F;
+            temp_green = Switches >> 10;         // Desplaza y 
+            temp_green = temp_green & 0x1F;      // Aisla el valor de switches
             temp_green = calcWorkCycle(temp_green);
             writeWorkCycle(temp_green, HRC_G);
 
@@ -89,6 +93,12 @@ int main (void){
 
 
 void writeWorkCycle(int workCycle, int memAddr){
+
+    /*
+    No hay variables de retorno, segun el ciclo de trabajo recibido y la direccion
+    de memoria recibida, escribe un valor definido en el registro HRC, el cual decrementa
+    su valor por defecto a la direccion dada
+    */
 
     switch (workCycle){
         case 0x1:
@@ -113,7 +123,12 @@ void writeWorkCycle(int workCycle, int memAddr){
 }
 
 int calcWorkCycle(int amountSWs){
-    
+   
+    /*
+    Desplaza y cuenta la cantidad de switches en alto, devolviendo este resultado como
+    un valor a ser interpretado por la funciòn de escritura como el valor del ciclo 
+    de trabajo del led correspondiente
+    */ 
     int CantSWs = 0;
     int i; 
     
