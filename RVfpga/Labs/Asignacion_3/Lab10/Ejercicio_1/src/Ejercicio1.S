@@ -118,7 +118,7 @@ delay2:
     jal spiCSUp
     li a0, 0x0B
     jal spiSendGetData
-    li a0, 0x0A
+    li a0, 0x10
     jal spiSendGetData
     li a0, 0xFF
     jal spiSendGetData
