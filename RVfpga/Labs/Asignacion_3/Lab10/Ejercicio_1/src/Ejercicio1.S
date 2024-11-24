@@ -85,6 +85,12 @@ InicializacionDeNuevaSerieDeTransacciones:
     # Retorna el valor por a1
     jal spiCSDown
 
+    li t0, 0xFFFF
+delay1:
+    li t1, 1
+    sub t0, t0, t1
+    bne zero, t0, delay1
+
     // Aislando el byte de resultado para X
     li t0, 0xFF
     and a2, a1, t0
@@ -99,6 +105,12 @@ InicializacionDeNuevaSerieDeTransacciones:
     # Retorna el valor por a1
     jal spiCSDown
 
+    li t0, 0xFFFF
+delay2:
+    li t1, 1
+    sub t0, t0, t1
+    bne zero, t0, delay2
+
     // Aislando el byte de resultado para Y
     li t0, 0xFF
     and a3, a1, t0
@@ -112,6 +124,12 @@ InicializacionDeNuevaSerieDeTransacciones:
     jal spiSendGetData
     # Retorna el valor por a1
     jal spiCSDown
+
+    li t0, 0xFFFF
+delay3:
+    li t1, 1
+    sub t0, t0, t1
+    bne zero, t0, delay3
 
     // Aislando el byte de resultado para Z
     li t0, 0xFF
