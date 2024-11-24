@@ -74,55 +74,61 @@ main:
     jal spiInit
 
 InicializacionDeNuevaSerieDeTransacciones:
-    li a3, 0x3
-    li a2, 0x8
 
-IniciaUnaTransaccion:
     jal spiCSUp
     li a0, 0x0B
     jal spiSendGetData
-    mv a0, a2
-    # li a0, 0x8
+    li a0, 0x08
     jal spiSendGetData
     li a0, 0xFF
     jal spiSendGetData
-   # Retorna el valor por a1
-   jal spiCSDown
- 
-    # li t0, 0x3
-    # beq a3, t0, LlevamosUnValor
-    # li t0, 0x2
-    # beq a3, t0, LlevamosDosValores
-    # li t0, 0x1
-    # beq a3, t0, LlevamosTresValores
-    # beq zero,zero,MostrarValoresYReiniciar
- 
-# LlevamosUnValor:
-#      mv a1, a6
-#      j DecrementarValores
-#  
-# LlevamosDosValores:
-#      mv a1, a5
-#      j DecrementarValores
-#  
-# LlevamosTresValores:
-#     mv a1, a4
-#      j DecrementarValores
- 
-# MostrarValoresYReiniciar:
-#      li t1, 0xFF # Mascara para limpiar
-#      li t0, 0x18 # 24 en hex
-#      and a6, a6, t1  # limpia
-#      sll a6, a6, t0 # Desplaza
-#      li t0, 0xC # 12 en hexadecimal
-#      and a5, a5, t1 # Limpia
-#      sll a5, a5, t0 # Desplaza
-#      and a4, a4, t1 # limpia
-#      or a4, a4, a5
-#      or a4, a4, a6
+    # Retorna el valor por a1
+    jal spiCSDown
+
+    // Aislando el byte de resultado para X
+    li t0, 0xFF
+    and a2, a1, t0
+
+    jal spiCSUp
+    li a0, 0x0B
+    jal spiSendGetData
+    li a0, 0x09
+    jal spiSendGetData
+    li a0, 0xFF
+    jal spiSendGetData
+    # Retorna el valor por a1
+    jal spiCSDown
+
+    // Aislando el byte de resultado para Y
+    li t0, 0xFF
+    and a3, a1, t0
+
+    jal spiCSUp
+    li a0, 0x0B
+    jal spiSendGetData
+    li a0, 0x0A
+    jal spiSendGetData
+    li a0, 0xFF
+    jal spiSendGetData
+    # Retorna el valor por a1
+    jal spiCSDown
+
+    // Aislando el byte de resultado para Z
+    li t0, 0xFF
+    and a4, a1, t0
+
+    // Para escribir a los 7 segmentos tenemos que escribir
+    // un word, entonces hay que unificar todas las lecturas
+    // en un registro
+
+    slli a2, a2, 24
+    slli a3, a3, 12
     
+    add a2, a2, a3
+    add a2, a2, a4  
+ 
     li t0, SegDig_ADDR
-    sw a1, 0(t0)
+    sw a2, 0(t0)
 
     li t0, 0xFFFF
 delay:
@@ -131,12 +137,6 @@ delay:
     bne zero, t0, delay
 
     j InicializacionDeNuevaSerieDeTransacciones
-
-# DecrementarValores:
-#     li t0, 0x1
-#     sub a3, a3, t0
-#     add a2, a2, t0
-#     j IniciaUnaTransaccion
 
 .end
 
