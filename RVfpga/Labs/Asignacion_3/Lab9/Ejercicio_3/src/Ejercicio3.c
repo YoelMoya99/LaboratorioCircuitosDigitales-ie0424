@@ -60,7 +60,7 @@ extern D_PSP_DATA_SECTION D_PSP_ALIGNED(1024) pspInterruptHandler_t G_Ext_Interr
 
 
 void GPIO_ISR(void){
-
+    // Se comprueba el accionamiento del switch
     if (0x10000 & M_PSP_READ_REGISTER_32(RGPIO_INTS)){
 
         M_PSP_WRITE_REGISTER_32(RPTC_LRC, DEFAULT_LH_RC);
@@ -69,10 +69,11 @@ void GPIO_ISR(void){
         Count = 0;
 
     }
+    // Accionamiento de BTNC
     if (0x1 & M_PSP_READ_REGISTER_32(RGPIO_BOTON_INTS)){
 
         int LocalTemp = M_PSP_READ_REGISTER_32(RPTC_LRC);
-
+    // Comprobando si llego a la velocidad maxima
         if ((LocalTemp < MAX_LH_RC) && (LocalTemp > MIN_LH_RC)) {
             
             M_PSP_WRITE_REGISTER_32(RPTC_LRC, LocalTemp / 2);
