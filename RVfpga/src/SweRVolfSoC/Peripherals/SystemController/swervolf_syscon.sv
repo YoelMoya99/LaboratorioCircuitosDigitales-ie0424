@@ -220,15 +220,29 @@ module swervolf_syscon
 	     if (i_wb_sel[0])
 	       irq_timer_en <= i_wb_dat[0];
 	  end
+// ------------------------------------------------------------------------------
+//
+//  	14 : begin
+//  	   if (i_wb_sel[0]) Enables_Reg[7:0]  <= i_wb_dat[7:0];
+//  	end
+// -----------------------------------------------------------------------------
+
+// Cambios realizados: i_wb_dat las direcciones van bien?
+// ----------------------------------------------------------------------------
   	14 : begin
-  	   if (i_wb_sel[0]) Enables_Reg[7:0]  <= i_wb_dat[7:0];
+       if (i_wb_sel[0]) Digits_Reg1[7:0] <= i_wb_dat[7:0];
+       if (i_wb_sel[1]) Digits_Reg2[7:0] <= i_wb_dat[15:8];
+       if (i_wb_sel[2]) Digits_Reg3[7:0] <= i_wb_dat[23:16];
+       if (i_wb_sel[3]) Digits_Reg4[7:0] <= i_wb_dat[31:24];
   	end
+
   	15 : begin
-       if (i_wb_sel[0]) Digits_Reg[7:0]   <= i_wb_dat[7:0];
-       if (i_wb_sel[1]) Digits_Reg[15:8]  <= i_wb_dat[15:8];
-       if (i_wb_sel[2]) Digits_Reg[23:16] <= i_wb_dat[23:16];
-       if (i_wb_sel[3]) Digits_Reg[31:24] <= i_wb_dat[31:24];
+       if (i_wb_sel[0]) Digits_Reg5[7:0] <= i_wb_dat[7:0];
+       if (i_wb_sel[1]) Digits_Reg6[7:0] <= i_wb_dat[15:8];
+       if (i_wb_sel[2]) Digits_Reg7[7:0] <= i_wb_dat[23:16];
+       if (i_wb_sel[3]) Digits_Reg8[7:0] <= i_wb_dat[31:24];
   	end
+// --------------------------------------------------------------------------
 	endcase
 
       case (i_wb_adr[5:2])
@@ -280,13 +294,33 @@ module swervolf_syscon
 	// Eight-Digit 7 Segment Displays
 
 	  reg  [ 7:0]  Enables_Reg;
-	  reg  [31:0]  Digits_Reg;
+// ------------------------------------------------
+// Duda con el assign
+// ------------------------------------------------
+      assign Enables_Reg = 8'h00;
+	  
+      reg  [7:0]  Digits_Reg1;
+	  reg  [7:0]  Digits_Reg2;
+	  reg  [7:0]  Digits_Reg3;
+	  reg  [7:0]  Digits_Reg4;
+	  
+      reg  [7:0]  Digits_Reg5;
+	  reg  [7:0]  Digits_Reg6;
+	  reg  [7:0]  Digits_Reg7;
+	  reg  [7:0]  Digits_Reg8;
 
-	  SevSegDisplays_Controller SegDispl_Ctr(
+    SevSegDisplays_Controller SegDispl_Ctr(
 	    .clk               (i_clk),    
 	    .rst_n             (i_rst),
 	    .Enables_Reg       (Enables_Reg), 
-	    .Digits_Reg        (Digits_Reg), 
+	    .Digits_Reg1        (Digits_Reg1), 
+	    .Digits_Reg2        (Digits_Reg2), 
+	    .Digits_Reg3        (Digits_Reg3), 
+	    .Digits_Reg4        (Digits_Reg4), 
+	    .Digits_Reg5        (Digits_Reg5), 
+	    .Digits_Reg6        (Digits_Reg6), 
+	    .Digits_Reg7        (Digits_Reg7), 
+	    .Digits_Reg8        (Digits_Reg8), 
 	    .AN                (AN),
 	    .Digits_Bits       (Digits_Bits)
 	  );
@@ -302,7 +336,14 @@ module SevSegDisplays_Controller(
                      input wire           clk,
                      input wire           rst_n,
                      input wire    [ 7:0] Enables_Reg,
-                     input wire    [31:0] Digits_Reg,
+                     input wire    [7:0] Digits_Reg1,
+                     input wire    [7:0] Digits_Reg2,
+                     input wire    [7:0] Digits_Reg3,
+                     input wire    [7:0] Digits_Reg4,
+                     input wire    [7:0] Digits_Reg5,
+                     input wire    [7:0] Digits_Reg6,
+                     input wire    [7:0] Digits_Reg7,
+                     input wire    [7:0] Digits_Reg8,
                      output wire   [ 7:0] AN,
                      output wire   [ 6:0] Digits_Bits);
 
@@ -311,14 +352,12 @@ module SevSegDisplays_Controller(
   wire overflow_o_count;
 
 
-
-  SevenSegDecoder SevSegDec(.data(DecNumber), .seg(Digits_Bits));
-
-
+// ------------------------------------------------------------------------
+// Este si se quita porque ya no se ocupa. Hay que escribir uno nuevo 
+  SevenSegAssign SevSegAss(.AN(AN), .Digits_Bits(Digits_Bits));
+// ------------------------------------------------------------------------
 
   counter #(COUNT_MAX)  counter20(clk, ~rst_n, 1'b0, 1'b1, 1'b0, 1'b0, 16'b0, countSelection, overflow_o_count);
-
-
 
   wire [ 7:0] [7:0] enable;
 
@@ -331,6 +370,9 @@ module SevSegDisplays_Controller(
   assign enable[6] = (Enables_Reg | 8'hbf);
   assign enable[7] = (Enables_Reg | 8'h7f);
 
+// ---------------------------------------------------------------------
+// Este mux si se deja a como está
+// ---------------------------------------------------------------------
   SevSegMux
   #(
     .DATA_WIDTH(8),
@@ -343,60 +385,82 @@ module SevSegDisplays_Controller(
     .SEL(countSelection[(COUNT_MAX-1):(COUNT_MAX-3)])
   );
 
-
-  wire [ 7:0] [3:0] digits_concat;
-
-  assign digits_concat[0] = Digits_Reg[3:0];
-  assign digits_concat[1] = Digits_Reg[7:4];
-  assign digits_concat[2] = Digits_Reg[11:8];
-  assign digits_concat[3] = Digits_Reg[15:12];
-  assign digits_concat[4] = Digits_Reg[19:16];
-  assign digits_concat[5] = Digits_Reg[23:20];
-  assign digits_concat[6] = Digits_Reg[27:24];
-  assign digits_concat[7] = Digits_Reg[31:28];
-
-  SevSegMux
-  #(
-    .DATA_WIDTH(4),
-    .N_IN(8)
-  )
-  Select_Digits
-  (
-    .IN_DATA(digits_concat),
-    .OUT_DATA(DecNumber),
-    .SEL(countSelection[(COUNT_MAX-1):(COUNT_MAX-3)])
-  );
-
-endmodule
+// ----------------------------------------------------------
+// Decodificador implementado por mi
+// ----------------------------------------------------------
 
 
-
-module SevenSegDecoder(input wire     [3:0] data,
-                           output reg [6:0] seg);
+module SevenSegAssign(input wire     [7:0] AN,
+                           output reg [6:0] Digits_Bits);
   always @(*)
-    case(data)
+    case(AN)
                   // abc_defg
-      4'h0: seg = 7'b000_0001;
-      4'h1: seg = 7'b100_1111;
-      4'h2: seg = 7'b001_0010;
-      4'h3: seg = 7'b000_0110;
-      4'h4: seg = 7'b100_1100;
-      4'h5: seg = 7'b010_0100;
-      4'h6: seg = 7'b010_0000;
-      4'h7: seg = 7'b000_1111;
-      4'h8: seg = 7'b000_0000;
-      4'h9: seg = 7'b000_1100;
-      4'ha: seg = 7'b000_1000;
-      4'hb: seg = 7'b110_0000;
-      4'hc: seg = 7'b111_0010;
-      4'hd: seg = 7'b100_0010;
-      4'he: seg = 7'b011_0000;
-      4'hf: seg = 7'b011_1000;
+      8'hFB: Digits_Bits = Digits_Reg3[6:0];
+      8'hFE: Digits_Bits = Digits_Reg1[6:0];
+      8'hFD: Digits_Bits = Digits_Reg2[6:0];
+      8'hF7: Digits_Bits = Digits_Reg4[6:0];
+      8'hEF: Digits_Bits = Digits_Reg5[6:0];
+      8'hDF: Digits_Bits = Digits_Reg6[6:0];
+      8'hBF: Digits_Bits = Digits_Reg7[6:0];
+      8'h7F: Digits_Bits = Digits_Reg8[6:0];
       default: 
-            seg = 7'b111_1111;
+            Digits_Bits = 7'b111_1111;
     endcase
+   
 endmodule
+//  wire [ 7:0] [3:0] digits_concat;
+//
+//  assign digits_concat[0] = Digits_Reg[3:0];
+//  assign digits_concat[1] = Digits_Reg[7:4];
+//  assign digits_concat[2] = Digits_Reg[11:8];
+//  assign digits_concat[3] = Digits_Reg[15:12];
+//  assign digits_concat[4] = Digits_Reg[19:16];
+//  assign digits_concat[5] = Digits_Reg[23:20];
+//  assign digits_concat[6] = Digits_Reg[27:24];
+//  assign digits_concat[7] = Digits_Reg[31:28];
+//
+//  SevSegMux
+//  #(
+//    .DATA_WIDTH(4),
+//    .N_IN(8)
+//  )
+//  Select_Digits
+//  (
+//    .IN_DATA(digits_concat),
+//    .OUT_DATA(DecNumber),
+//    .SEL(countSelection[(COUNT_MAX-1):(COUNT_MAX-3)])
+//  );
+//
+// endmodule
+//
 
+
+//module SevenSegDecoder(input wire     [3:0] data,
+//                           output reg [6:0] seg);
+//  always @(*)
+//    case(data)
+//                  // abc_defg
+//      4'h0: seg = 7'b000_0001;
+//      4'h1: seg = 7'b100_1111;
+//      4'h2: seg = 7'b001_0010;
+//      4'h3: seg = 7'b000_0110;
+//      4'h4: seg = 7'b100_1100;
+//      4'h5: seg = 7'b010_0100;
+//      4'h6: seg = 7'b010_0000;
+//      4'h7: seg = 7'b000_1111;
+//      4'h8: seg = 7'b000_0000;
+//      4'h9: seg = 7'b000_1100;
+//      4'ha: seg = 7'b000_1000;
+//      4'hb: seg = 7'b110_0000;
+//      4'hc: seg = 7'b111_0010;
+//      4'hd: seg = 7'b100_0010;
+//      4'he: seg = 7'b011_0000;
+//      4'hf: seg = 7'b011_1000;
+//      default: 
+//            seg = 7'b111_1111;
+//    endcase
+//endmodule
+endmodule
 
 
 module SevSegMux
