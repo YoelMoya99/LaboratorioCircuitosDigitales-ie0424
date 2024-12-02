@@ -15,33 +15,37 @@
 
 .text
     # --------------------- Inicio de sub rutinas -----------------------
+
 spiInit:
     li t1, SPCR
-    li t0, 0x53
-    sb t0, 0(t1)
+    li t0, 0x53      # Comando de configuración SPI
+    sb t0, 0(t1)     # Configurar SPI
     li t1, SPER
-    li t0, 0x02
+    li t0, 0x02      # Comando para habilitar SPI
     sb t0, 0(t1)
 ret
 
+
+# Habilitar/deshabilitar chip select (CS) para SPI
 spiCS:
     li t0, SPCS
     sb a0, 0(t0)
 ret
 
 spiCSUp:
-    li a0, 0x00
+    li a0, 0x00  # Configurar CS como desactivado
     j spiCS
 
 spiCSDown:
-    li a0, 0xFF
+    li a0, 0xFF # Configurar CS como activado
     j spiCS
 
-spiSendGetData:
+
+spiSendGetData:     # Limpiar bandera de interrupción interna
 internalSpiClearIF:
     li t1, SPCR
     lb t0, 0(t1)
-    ori t0,t0,0x80
+    ori t0,t0,0x80  # Configurar para limpiar la bandera
     sb t0, 0(t1)
 internalSpiActualSend:
     li t0, SPDR
@@ -51,13 +55,13 @@ internalSpiTestIF:
     lb t0, 0(t1)
     andi t0,t0,0x80
     li t1,0x80
-    bne t0, t1,internalSpiTestIF
-internalSpiReadData:
+    bne t0, t1,internalSpiTestIF     # Repetir hasta que SPIF esté activo 
+internalSpiReadData:        # Leer el dato recibido desde SPI
     li t0, SPDR
     lb a1, 0(t0)
 ret
 
-# ------------------ Bloque de codigo principal -------------------
+# ==================== Bloque de codigo principal ========================
 main:
 
     # Inicializa la pantalla de 7 segmentos con valores intercalados
@@ -71,65 +75,66 @@ main:
     li t1, 0x0
     sw t1, 0(t0)
 
+    li s5, 200000         # Valor para el retraso
+
     jal spiInit
 
 InicializacionDeNuevaSerieDeTransacciones:
 
-    jal spiCSUp
-    li a0, 0x0B
+    # -------- Tomando valores del eje x ------------
+
+    jal spiCSUp         # Activar chip select
+    li a0, 0x0B         # Comando para leer datos del eje X
     jal spiSendGetData
-    li a0, 0x08
+    li a0, 0x08         # Comando para obtener los datos de X
     jal spiSendGetData
-    li a0, 0xFF
+    jal spiSendGetData
+    li a0, 0xFF          
     jal spiSendGetData
     # Retorna el valor por a1
     jal spiCSDown
 
-    li t0, 0xFFFF
-delay1:
-    li t1, 1
-    sub t0, t0, t1
-    bne zero, t0, delay1
+    li t5, 0            # Reiniciar contador de retraso
+    jal delay           # Llamar al retraso
 
     // Aislando el byte de resultado para X
     li t0, 0xFF
     and a2, a1, t0
+
+    # -------- Tomando valores del eje y ------------
 
     jal spiCSUp
     li a0, 0x0B
     jal spiSendGetData
     li a0, 0x09
     jal spiSendGetData
+    jal spiSendGetData
     li a0, 0xFF
     jal spiSendGetData
-    # Retorna el valor por a1
     jal spiCSDown
 
-    li t0, 0xFFFF
-delay2:
-    li t1, 1
-    sub t0, t0, t1
-    bne zero, t0, delay2
+    li t5, 0            # Reiniciar contador de retraso
+    jal delay           # Llamar al retraso
 
     // Aislando el byte de resultado para Y
     li t0, 0xFF
     and a3, a1, t0
 
+
+    # -------- Tomando valores del eje z ------------
     jal spiCSUp
     li a0, 0x0B
     jal spiSendGetData
     li a0, 0x12
+    jal spiSendGetData
     jal spiSendGetData
     li a0, 0xFF
     jal spiSendGetData
     # Retorna el valor por a1
     jal spiCSDown
 
-    li t0, 0xFFFF
-delay3:
-    li t1, 1
-    sub t0, t0, t1
-    bne zero, t0, delay3
+    li t5, 0            # Reiniciar contador de retraso
+    jal delay           # Llamar al retraso
 
     // Aislando el byte de resultado para Z
     li t0, 0xFF
@@ -148,13 +153,15 @@ delay3:
     li t0, SegDig_ADDR
     sw a2, 0(t0)
 
-    li t0, 0xFFFF
-delay:
-    li t1, 1
-    sub t0, t0, t1
-    bne zero, t0, delay
+    jal delay       # Aplicando delay
 
     j InicializacionDeNuevaSerieDeTransacciones
+
+
+delay:
+    addi t5, t5, 1         # Incrementar el contador de retraso
+    blt t5, s5, delay     
+    jr ra                  # Retornar a la instrucción anterior
 
 .end
 
