@@ -386,7 +386,7 @@ module SevSegDisplays_Controller(
   );
 
 // ----------------------------------------------------------
-// Decodificador implementado por mi
+// Decodificador implementado para letras
 // ----------------------------------------------------------
 
 
