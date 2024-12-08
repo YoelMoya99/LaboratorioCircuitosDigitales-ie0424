@@ -8,6 +8,15 @@
 //          Direcciones: DEFINES DEL MODULO DE 7 SEG extendido
 // ---------------------------------------------------------------------------
 
+/* Se definen las direcciones base tipicas de los displays de 7 segmentos 
+modificados, los cuales inician con los 4 displays de la derecha en la
+direcciòn donde se encontraba el registro de enable. 4 bytes despues se  
+asigna la direcciòn de los 4 bytes de la izquierda.
+
+Como cada byte corresponde a un digito, se asigna cada una de estas direcciònes
+a un valor respectivo
+*/
+
 #define SegDig_RIGHT   0x80001038
 #define SegDig_LEFT    0x8000103C
 
@@ -25,6 +34,12 @@
 //          Direcciones: DEFINES DEL MODULO GPIO (GPIO normal)
 // ---------------------------------------------------------------------------
 
+/* Se declaran las direcciones de los registros de la GPIO que se utilizan 
+para habilitaciòn e interrupcion de los mismos. Esto con el objetivo de tener
+acceso a todos los registros si se considerara nesesario en algun punto del 
+desarrollo del proyecto.
+*/
+
 #define GPIO_SWs        0x80001400
 #define GPIO_LEDs       0x80001404
 #define GPIO_INOUT      0x80001408
@@ -37,6 +52,11 @@
 //                  Direcciones: DEFINES DEL MODULO PTC 
 // ---------------------------------------------------------------------------
 
+/* Similar a las direcciones del modulo de GPIO se realiza  lo mismo para el
+PTC el cual es esencial para generar la interrupciòn que maneja la temporizaciòn
+de todo el sistema
+*/
+
 #define RPTC_CNTR       0x80001200
 #define RPTC_HRC        0x80001204
 #define RPTC_LRC        0x80001208
@@ -47,6 +67,11 @@
 //                 Direcciones: DEFINES DE LOS BOTONES (GPIO2)
 // ---------------------------------------------------------------------------
 
+/* De el segundo modulo instanciado de las GPIO se nesesitan las direcciones de
+donde se leen estos botones, sin embargo (como se ha expresado) se incluyen todos
+los registros
+*/
+
 #define GPIO_BOTON        0x80001800
 #define RGPIO_BOTON_INTE  0x8000180C  
 #define RGPIO_BOTON_PTRIG 0x80001810  
@@ -54,8 +79,13 @@
 #define RGPIO_BOTON_INTS  0x8000181C 
 
 // ---------------------------------------------------------------------------
-//                 Valores: DEFINES DE LOS BOTONES (GPIO2)
+//                 Valores: INTERRUPCIÒN DE TIEMPO 
 // ---------------------------------------------------------------------------
+
+/* Se definen los valores utilizados en la interrupciòn los cuales inicializan el
+modulo PTC, definen el valor a utilizar en los registros LRC y HRC para generar
+la base de tiempo de 1mS
+*/
 
 #define INT             0x40
 #define INTERRUPT_START 0x21
@@ -85,7 +115,10 @@
 #define  HRC_R            0x80001244
 #define CTRL_R            0x8000124C
 
-// Valores para determinar el ciclo de trabajo de los leds
+// Valores para determinar el ciclo de trabajo de los leds donde se
+// define 1mS en bajo y un 10% de ese valor en alto, para un ciclo
+// de trabajo del 10%. Esto con el objetivo de que brille y sea visible
+// pero no cegador
 #define HRC_ON_VALUE     0xAFC8  // 45000
 #define RC_DEFAULT_VALUE  0xC350 // 50000
 #define OE                0x08
@@ -94,8 +127,30 @@
 // ---------------------------------------------------------------------------
 //                 ESTRUCTURAS DE DATOS GLOBALES
 // ---------------------------------------------------------------------------
+/* Se definen de manera global todas las variables a utilizar con el objetivo de
+que se presente mejor el alcance de cada parte del codigo. A pesar de que en algunas
+ocaciones hay varibles que se comparten, esta no es la norma
+*/
 
 // ---------------- Variables de estado de led testigo -----------------------------------
+/* El led testigo es una maquina de estados que pretende cumplir varios objetivos. El 
+primero es Funcionalidad general de la temporizaciòn. Como hay muchas transiciones entre
+funciones, y entre punteros, es posible que se pierda el PC del programa; Esto es avisado
+por el led ya que deja de encender. La segunda funcionalidad es decorativa para el usuario
+ya que se da la rotaciòn del led tricolor. Por ultimo esta maquina posee una funcionalidad
+conceptual, esto debido a que es la maquina mas simple de desarrollar y de entender
+
+Se definen dos variables, un temporizador que se decrementa cada vez que se entra a la 
+interrupciòn del PTC hasta llegar a cero y que es cargado con un valor de 1000, 
+por lo que cuando este se hace cero, ha pasado un segundo.
+
+Se define una variable de tipo puntero a funciòn, la cual se explica a detalle en la 
+declaraciòn de las funciones de esta maquina
+
+Finalmente se definen los estados a utilizar para que no se den errores en la compilacion
+por usar funciones no declaradas.
+*/
+
 static unsigned int TimerLedTestigo = 0;
 static void (*EstPresLedTestigo)(void);
 
@@ -105,6 +160,22 @@ void Est2_LedTestigo(void);
 void Est3_LedTestigo(void);
 
 // --------------- Variables de estdo de botones pulsadores ----------------------------
+/* Esta es la maquina mas compleja de todas, ya que en un unico sistema se resuelve la lectura
+de los 5 botones pulsadores. El funcionamiento es el mismo que para un solo boton, con la unica
+excepcion que un contador itera sobre los botones, y las variables pasan a ser arreglos.
+
+Se definen mascaras para leer cada uno de los botones por separado, temporizadores para evitar
+el rebote de los botones al ser presionados, otro para un presionado corto, el cual se define
+en 250 mS, y un ultimo para presionado largo, que se define para 3s. El objetivo de estos es
+poder no solo leer el boton al ser presionado, sino utilizar estos mismos para configurar el juego
+y registrar cambios, por lo que se obtienen para la temporizaciòn propuesta 2 estados por boton
+
+Como los botones se encuentran siendo utilizados, no se espera que su registro nativo guarde su 
+estado, por lo que se definen dos variables de banderas que se levantan en 1 al cumplir las
+condiciones de tiempo descritas anteriormente. Esto permite guardar el estado de manera mas
+permanente
+*/
+
 
 static void (*EstPresBotones[5])(void);   // Arreglo de estados
 static int Boton_i = 0;                   // Variable de dimensiones
@@ -129,6 +200,20 @@ static unsigned int BanderasSP = 0;
 static unsigned int BanderasLP = 0;
 
 // ----------------- Variables de estado de juego topos --------------------
+
+/* Se define para este juego una variable que recibe los valores del arreglo de tTimerTopo,
+el cual es indexado por la varible Contador. En este juego esta ultima variable lleva la
+cuenta de cuantos ganes se han realizado. Utiliza este valor para (tambien) indexar sobre el
+arreglo de mensajes de topo, que son mostrados en el display de 7 segmentos.
+
+Se definen los tres valores globales, que le asignan un valor arbitrario a cada juego. Este
+valor es revisado en la maquina de estados de los botones y segun la configuracion de las banderas
+de os botones, se asigna este valor a la variable current game, la cual define cual es el
+juego actual que se va a ejecutar.
+
+La variable de TimerSMStran define el tiempo de mensaje que se desplega cada valor. Como solo
+hay un display de 7 Segmentos solo se puede asignar un mensaje a la vez, por lo que uno basta
+*/
 
 static unsigned int TimerTopo   = 0;
 static unsigned int TimerSMSTran = 0;
@@ -156,6 +241,9 @@ static unsigned int Contador = 0;
 
 
 // ---------------- maquina de estados de Idle ------------------------------
+/* Esta maquina es utilizada para que no entre a un juego ni realice ningun
+proceso, por lo que es la maquina de estados por defecto del sistema
+*/
 
 static unsigned int TimerIdle   = 0;
 
@@ -167,6 +255,12 @@ void Est2_Idle(void);
 void Est3_Idle(void);
 
 // ----------------- maquina de estados LEDS game -------------------------
+
+/* La maquina de estados de Tenis Leds, unicamente tiene su temporizador
+y sus valores de carga, que similar al juego anterior, se utiliza la varible
+contador para indexar sobre el arreglo, incrementando con cada intento la 
+velocidad de la rotaciòn de los leds
+*/
 
 static unsigned int TimerTenisLED   = 0;
 
@@ -187,8 +281,10 @@ static unsigned int tTimerTenisLED [10] = {500, 400, 300, 200, 100, 90, 80, 70, 
 
 // ---------------- tablas de 7 segmentos -----------------------------------
 
-// Tabla de mensajes y tabla de numeros
-
+/* Tabla (valores) de mensajes y tabla de numeros, las cuales definen el patron de leds de un 
+segmento que genera la letra correspondiente. Se realizo esta tabla para, de una 
+manera mas sencilla, poder escribir a los 7 Segmentos mensajes alfanumericos
+*/
 
 // ---------------- Letras posibles de colcar -------------------------------
 
@@ -238,7 +334,10 @@ static unsigned int tTimerTenisLED [10] = {500, 400, 300, 200, 100, 90, 80, 70, 
 //            SUBRUTINAS DE INTERRUPCIONES
 // ---------------------------------------------------------------------------
 
-
+/*
+Estas no fueron diseñadas como parte del proyecto por lo que solo se apartan en 
+su respectiva secciòn.
+*/
 
 extern D_PSP_DATA_SECTION D_PSP_ALIGNED(1024) pspInterruptHandler_t G_Ext_Interrupt_Handlers[8];
 
@@ -300,7 +399,14 @@ void PTC_Initialization(void){
 }
 
 void Padre_Tiempo_PTC_ISR(void){
-    // Funcion de interrupciones PTC A.K.A. Padre Tiempo
+    /* Funcion de interrupciones PTC A.K.A. Padre Tiempo
+    La sub rutina de antencion a interrupciones del PTC la cual fue 
+    configurada a un periodo de interrupciòn de 1mS, prueba si son cero cada
+    uno de los temporizadores, y de no ser asi, decrementa en uno su contenido.
+    Esto hace que cuando se carguen durante el codigo, se asigne su valor en mS y
+    se prueba su finalizaciòn de tiempo transcurrido al compararlo con cero. Los 
+    arreglos de contadores de los botones se decrementan en un ciclo.
+    */
 
     M_PSP_WRITE_REGISTER_32(RPTC_CTRL, INTERRUPT_START);  // Borando interrupt PTC
     
@@ -405,6 +511,16 @@ void writeWordToDisplay(const char *word) {
 // ==========================================================
 //          MAQUINA DE ESTADOS LED TESTIGO
 // ==========================================================
+
+/* Se definen todos los estados donde se incluye la funcion principal. Esta
+Funcion llama al contenido de la variable puntero a funcion, lo que hace que
+salte a alguna de las tres funciones de estado. Estas funciones de estado se
+aseguran que el tiempo de rotaciòn de los leds ha finalizado, y de ser asi 
+apagan todos los otros leds y encienden su led correspondiente. Cargan de nuevo
+el valor del temporizador, y modifican el contenido de la varible puntero, por
+lo que la proxima vez que el contenido de esta variable es llamada, entre a una
+diferente funcion.
+*/
 
 void ME_LedTestigo(void){ (*EstPresLedTestigo)(); }
 
