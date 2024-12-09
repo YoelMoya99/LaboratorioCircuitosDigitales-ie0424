@@ -561,6 +561,19 @@ void Est3_LedTestigo(void){
 // =================================================================
 //                PUSH BUTTONS
 // =================================================================
+/* Los botnes pulsadores se leen en 4 estados, con el objetivo de suprimir los 
+rebotes en el hardware y evitar multiples lecturas ya que seran utilizados para 
+configurar el sistema. 
+En un segundo estado se comprueba que estos rebotes ya pasaron , y se continuna con
+el tiempo de presionado corto y presionado largo, donde al cumplirse las condiciones en
+el tercer y cuarto estado respectivamente se levantan en uno las banderas de los registros
+de banderas correspondientes a la posiciòn del boton.
+Estas banderas se definen en la posicion que tendria el boton para volverlas mas facil de
+identificar.
+Al final de los estados de la maquina de estados multidimencional de los botones (una dimensiòn
+por boton) se encuentran una maquina de estados de un estado que es la encargada de poner los valores
+de las banderas en los leds y borrar estas banderas.
+*/
 
 void ME_Botones(void){
     (*EstPresBotones[Boton_i])();
@@ -648,6 +661,11 @@ void ME_LED_Botones(void){
 // =================================================================
 //                JUEGO UNO TOPOS
 // =================================================================
+
+/* Este juego consiste en definir un patron de leds y revisar que el patron de 
+switches en alto coincida con el puesto en los LEDS. Al coincidir estos patrones
+se decrementa el tiempo permitido para poner el patron.
+*/
 
 void ME_JuegoTopos(void){ (*EstPresTopos)(); }
 
@@ -762,6 +780,10 @@ void Est6_JuegoTopos(void){
 //                JUEGO IDLE
 // =================================================================
 
+/* Este no es un juego per se, ya que este busca unicamente definir un estado donde
+el sistema se encuentra en tiempo muerto y no hay ningun juego siendo calculado.
+*/
+
 void ME_Idle(void){ (*EstPresIdle)(); }
 
 void Est1_Idle(void){
@@ -814,6 +836,12 @@ void Est3_Idle(void){
 //  =========================================================================
 //              JUEGO TENIS LED
 // ==========================================================================
+
+/* El juego se define como un valor de led que se desplaza de un lado a otro, y cuando 
+este led se encuentra encencido en la posiciòn mas significativa el sistema revisa la 
+bandera de presionado corto del lado derecho, sucede lo mismo al lado izquierdo, si la
+bandera esta en uno el sistema cambia la direccion del desplazamiento y decrementa el tiemp 
+de desplazamiento*/
 
 void ME_JuegoTenisLED(void){ (*EstPresTenisLED)(); }
 
@@ -989,7 +1017,7 @@ int main(void)
   pspInterruptsEnable();                              /* Enable all interrupts in mstatus CSR */
   M_PSP_SET_CSR(D_PSP_MIE_NUM, D_PSP_MIE_MEIE_MASK);  /* Enable external interrupts in mie CSR */
 
-// ------------------ Led tri color ---------------------------------------
+// ------------------ Led tri color --------------------------------------- Inicializacion
 
     M_PSP_WRITE_REGISTER_32(CTRL_R, 1);
     M_PSP_WRITE_REGISTER_32(LRC_R, RC_DEFAULT_VALUE);
@@ -1000,12 +1028,11 @@ int main(void)
     M_PSP_WRITE_REGISTER_32(CTRL_B, 1);
     M_PSP_WRITE_REGISTER_32(LRC_B, RC_DEFAULT_VALUE);
     
-
-// ------------------ Pantalla de 7 segmentos -----------------------------
-
-// ------------------ gpio y gpio2 ----------------------------------------
+// ------------------ gpio y gpio2 ---------------------------------------- Inicializacion
  
   M_PSP_WRITE_REGISTER_32(GPIO_INOUT, 0xFFFF);
+
+// ----------------- Estados iniciales de las maquinas del sistema --------------
 
   EstPresLedTestigo = &Est1_LedTestigo;
   EstPresBotones[0] = &Est1_Botones;
@@ -1017,7 +1044,7 @@ int main(void)
   EstPresIdle = &Est1_Idle;
   EstPresTenisLED = &Est1_JuegoTenisLED;
 
-  CurrentGame = CURRENT_GAME_IDLE;
+  CurrentGame = CURRENT_GAME_IDLE; // inicializacion del modo IDLE
 
   while (1) {
     /* SECUENCIADOR DE MAQUINAS DE ESTADO */
