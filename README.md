@@ -11,3 +11,6 @@ RVfpga:
 
 vivado:
  + proyectos de Vivado.
+
+### About this Repository
+This is a public mirror of a private repository. Original contributions are acknowledged in the commit history.
